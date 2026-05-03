@@ -1,0 +1,14 @@
+# Fine-tuned model weights (large — don't commit to git)
+model/
+
+# Processed datasets (can be regenerated)
+data/processed/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Evaluation results (optional)
+results/

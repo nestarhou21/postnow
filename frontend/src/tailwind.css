@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+}
+
+@layer utilities {
+  .bg-navy-black { background-color: #1A1A1A; }
+  .bg-cocoa-brown { background-color: #3D2314; }
+  .bg-lavender-gray { background-color: #E9ECF5; }
+  .perspective-lg { perspective: 1000px; }
+  .rotate-y-12 { transform: rotateY(-12deg) rotateX(5deg); }
+  .rotate-y-neg-12 { transform: rotateY(12deg) rotateX(5deg); }
+  
+  .no-border {
+    border: none;
+  }
+}

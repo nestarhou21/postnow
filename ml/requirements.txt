@@ -1,0 +1,14 @@
+# ml/requirements.txt
+# Install these before running any ml/ script:
+#   pip install -r ml/requirements.txt
+#
+# Google Colab already has torch; skip that line if running on Colab.
+
+anthropic>=0.34.0          # generate_data.py
+transformers>=4.40.0       # train.py / infer.py / evaluate.py
+datasets>=2.18.0           # optional — for loading OPUS EN-KH data
+sentencepiece>=0.2.0       # mBART tokenizer
+sacrebleu>=2.4.0           # evaluate.py
+accelerate>=0.29.0         # efficient training
+tqdm>=4.66.0               # progress bars
+torch>=2.2.0               # deep learning runtime (install separately for GPU)

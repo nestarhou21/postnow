@@ -1,0 +1,76 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "tertiary-fixed-dim": "#c3c6cf",
+        "on-primary-fixed": "#2c1700",
+        "on-secondary-fixed-variant": "#5e402f",
+        "primary-container": "#c8a27c",
+        "on-surface-variant": "#4f453c",
+        "on-tertiary-fixed": "#181c22",
+        "on-primary-fixed-variant": "#5d4123",
+        "surface-container": "#f4ede5",
+        "background": "#fff8f1",
+        "on-primary-container": "#53381b",
+        "surface-container-high": "#eee7df",
+        "tertiary-container": "#a5a9b1",
+        "primary": "#775838",
+        "tertiary": "#5b5e66",
+        "surface-variant": "#e8e1da",
+        "inverse-surface": "#33302b",
+        "on-secondary-container": "#795845",
+        "on-secondary": "#ffffff",
+        "on-secondary-fixed": "#2d1608",
+        "surface-container-lowest": "#ffffff",
+        "on-tertiary-fixed-variant": "#43474e",
+        "surface-tint": "#775838",
+        "secondary-fixed": "#ffdbca",
+        "error-container": "#ffdad6",
+        "secondary-fixed-dim": "#e9bda7",
+        "primary-fixed-dim": "#e8bf97",
+        "on-surface": "#1e1b17",
+        "surface": "#fff8f1",
+        "secondary": "#795745",
+        "on-error-container": "#93000a",
+        "on-primary": "#ffffff",
+        "outline-variant": "#d3c4b8",
+        "surface-container-low": "#f9f3eb",
+        "surface-bright": "#fff8f1",
+        "inverse-on-surface": "#f7f0e8",
+        "inverse-primary": "#e8bf97",
+        "surface-dim": "#dfd9d1",
+        "on-error": "#ffffff",
+        "error": "#ba1a1a",
+        "on-background": "#1e1b17",
+        "tertiary-fixed": "#dfe2eb",
+        "secondary-container": "#fed1b9",
+        "outline": "#81756b",
+        "on-tertiary-container": "#3a3e45",
+        "on-tertiary": "#ffffff",
+        "primary-fixed": "#ffdcbc",
+        "surface-container-highest": "#e8e1da"
+      },
+      fontFamily: {
+        "headline": ["Plus Jakarta Sans"],
+        "body": ["Manrope"],
+        "label": ["Manrope"]
+      },
+      borderRadius: {
+        "DEFAULT": "0.25rem", 
+        "lg": "0.5rem", 
+        "xl": "0.75rem", 
+        "full": "9999px"
+      },
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/container-queries')
+  ],
+}

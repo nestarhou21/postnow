@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>POSTNOW Dataset Quality Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; margin:0; background:#f8f4ef; color:#333 }
+  .header { background:linear-gradient(135deg,#5A3E2B,#C8A27C); color:#fff; padding:32px 40px }
+  .header h1 { margin:0; font-size:26px }
+  .header p  { margin:6px 0 0; opacity:.85; font-size:14px }
+  .container { max-width:1200px; margin:0 auto; padding:30px 24px }
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-bottom:20px }
+  .card { background:#fff; border-radius:12px; padding:20px; box-shadow:0 1px 6px rgba(0,0,0,.07) }
+  .card h3 { margin:0 0 16px; font-size:14px; color:#5A3E2B; text-transform:uppercase; letter-spacing:.5px }
+  .stat-row { display:flex; gap:16px; margin-bottom:20px }
+  .stat { flex:1; background:#fff; border-radius:12px; padding:20px; text-align:center; box-shadow:0 1px 6px rgba(0,0,0,.07) }
+  .stat .num { font-size:32px; font-weight:700; color:#C8A27C }
+  .stat .lbl { font-size:12px; color:#888; margin-top:4px }
+  canvas { max-height:280px }
+  h2 { color:#5A3E2B; border-bottom:2px solid #C8A27C; padding-bottom:8px; margin-top:36px }
+  .quality-bar { background:#eee; border-radius:6px; height:10px; overflow:hidden; margin:4px 0 10px }
+  .quality-bar-fill { height:100%; border-radius:6px; background:linear-gradient(90deg,#C8A27C,#5A3E2B) }
+  table { width:100%; border-collapse:collapse; font-size:13px }
+  th { background:#f0e8df; color:#5A3E2B; padding:8px 12px; text-align:left }
+  td { padding:7px 12px; border-bottom:1px solid #f0e8df }
+  tr:hover td { background:#fffaf6 }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>☕ POSTNOW — Dataset Quality Report</h1>
+  <p>postnow_training_data_2500.json · 2,500 bilingual captions · EN + KH · mBART fine-tuning</p>
+</div>
+
+<div class="container">
+
+<!-- STAT ROW -->
+<div class="stat-row" style="margin-top:24px">
+  <div class="stat"><div class="num">2,500</div><div class="lbl">Total Captions</div></div>
+  <div class="stat"><div class="num">173</div><div class="lbl">Avg EN Length (chars)</div></div>
+  <div class="stat"><div class="num">140</div><div class="lbl">Avg KM Length (chars)</div></div>
+  <div class="stat"><div class="num">51.5%</div><div class="lbl">Avg Khmer Script Ratio</div></div>
+  <div class="stat"><div class="num">55</div><div class="lbl">Unique Products</div></div>
+  <div class="stat"><div class="num">61</div><div class="lbl">Unique Occasions</div></div>
+</div>
+
+<!-- ROW 1: Category distribution + KM ratio -->
+<div class="grid-2">
+  <div class="card">
+    <h3>Category Distribution</h3>
+    <canvas id="catPie"></canvas>
+  </div>
+  <div class="card">
+    <h3>Khmer Script % in KM Captions</h3>
+    <canvas id="kmRatio"></canvas>
+  </div>
+</div>
+
+<!-- ROW 2: Caption length histograms -->
+<div class="grid-2">
+  <div class="card">
+    <h3>English Caption Length Distribution (chars)</h3>
+    <canvas id="enLen"></canvas>
+  </div>
+  <div class="card">
+    <h3>Khmer Caption Length Distribution (chars)</h3>
+    <canvas id="kmLen"></canvas>
+  </div>
+</div>
+
+<!-- ROW 3: Top products + top moods -->
+<div class="grid-2">
+  <div class="card">
+    <h3>Top 15 Products</h3>
+    <canvas id="topProducts"></canvas>
+  </div>
+  <div class="card">
+    <h3>Top 12 Moods</h3>
+    <canvas id="topMoods"></canvas>
+  </div>
+</div>
+
+<!-- ROW 4: Occasions + Promotions -->
+<div class="grid-2">
+  <div class="card">
+    <h3>Top 12 Occasions</h3>
+    <canvas id="topOcc"></canvas>
+  </div>
+  <div class="card">
+    <h3>Top Promotion Types</h3>
+    <canvas id="topPromos"></canvas>
+  </div>
+</div>
+
+<!-- ROW 5: Audience + short vs medium -->
+<div class="grid-2">
+  <div class="card">
+    <h3>Target Audience Split</h3>
+    <canvas id="audChart"></canvas>
+  </div>
+  <div class="card" style="display:flex;flex-direction:column;justify-content:center">
+    <h3>Caption Length Mix (EN)</h3>
+    <div style="margin-bottom:16px">
+      <div style="font-size:13px;color:#555;margin-bottom:4px">Short (&lt;150 chars): <strong>191</strong> (8%)</div>
+      <div class="quality-bar"><div class="quality-bar-fill" style="width:8%"></div></div>
+      <div style="font-size:13px;color:#555;margin-bottom:4px">Medium (≥150 chars): <strong>2309</strong> (92%)</div>
+      <div class="quality-bar"><div class="quality-bar-fill" style="width:92%"></div></div>
+    </div>
+    <h3>Avg Hashtag Count</h3>
+    <div style="font-size:13px;color:#555">
+      🇬🇧 English: <strong>3.0</strong> tags/caption<br>
+      🇰🇭 Khmer: <strong>3.0</strong> tags/caption
+    </div>
+    <h3 style="margin-top:16px">Emoji Usage</h3>
+    <div style="font-size:13px;color:#555">
+      🇬🇧 Avg emojis/caption: <strong>1.5</strong><br>
+      🇰🇭 Avg emojis/caption: <strong>1.5</strong>
+    </div>
+  </div>
+</div>
+
+<!-- QUALITY CHECKS -->
+<h2>Quality Checks</h2>
+<div class="card" style="margin-bottom:20px">
+<table>
+<tr><th>Check</th><th>Result</th><th>Status</th></tr>
+<tr><td>Total captions = 2,500</td><td>2500</td><td>✅</td></tr>
+<tr><td>product_launch = 600</td><td>600</td><td>✅</td></tr>
+<tr><td>daily_moment = 700</td><td>700</td><td>✅</td></tr>
+<tr><td>promotion = 500</td><td>500</td><td>✅</td></tr>
+<tr><td>engagement = 400</td><td>400</td><td>✅</td></tr>
+<tr><td>brand_story = 300</td><td>300</td><td>✅</td></tr>
+<tr><td>All captions have EN caption</td><td>2500</td><td>✅</td></tr>
+<tr><td>All captions have KM caption</td><td>2500</td><td>✅</td></tr>
+<tr><td>All captions have EN hashtags</td><td>2500</td><td>✅</td></tr>
+<tr><td>All captions have KM hashtags</td><td>2500</td><td>✅</td></tr>
+<tr><td>Unique product IDs (no duplicates)</td><td>2500</td><td>✅</td></tr>
+<tr><td>Avg Khmer script ratio ≥ 20%</td><td>51.5%</td><td>✅</td></tr>
+<tr><td>Unique products used</td><td>55</td><td>✅</td></tr>
+<tr><td>Unique occasions used</td><td>61</td><td>✅</td></tr>
+</table>
+</div>
+
+<!-- SAMPLE CAPTIONS -->
+<h2>Sample Captions (3 per Category)</h2>
+<h3 style="color:#5A3E2B;margin-top:28px">Product Launch — 3 Random Samples</h3>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#C8A27C;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Product Launch</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #1436 · cozy, warm · limited edition drop</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">This season, we're bringing something tropical to your cup. 🌴☕<br><br>Our Hot Chocolate is inspired by the warmth of Cambodia — sweet, smooth, and absolutely unforgettable.<br><br>Available now at all locations!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#NewDrink #LimitedEdition #CoffeeTime</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">រដូវនេះ យើងបញ្ចូលអ្វីត្រូពិចមកក្នុងកែវរបស់អ្នក។ 🌴☕<br><br>Hot Chocolate របស់យើងបង្ហាញពីភាពកំដៅនៃកម្ពុជា — ផ្អែម ទន់ ហើយមិនអាចភ្លេចបាន!<br><br>មានឥឡូវនេះនៅគ្រប់សាខា!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#ណែនាំថ្មី #រសជាតិថ្មី #កាហ្វេខ្មែរ</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#C8A27C;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Product Launch</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #656 · innovative, premium · new menu launch</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">They asked. We delivered. 🙌☕<br><br>Our brand-new Peppermint Mocha is finally here — smooth, satisfying, and made with premium Cambodian beans.<br><br>First 50 customers get a free upgrade! 🎁</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#LaunchDay #NewFlavor #CoffeeKH</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">ពួកគេស្នើ។ យើងបានផ្ដល់ជូន។ 🙌☕<br><br>Peppermint Mocha ថ្មីបំផុតរបស់យើងមកដល់ — ទន់ ពេញចិត្ត ហើយផលិតពីគ្រាប់កាហ្វេខ្មែរ Premium!<br><br>អតិថិជន 50 ដំបូងទទួលការ Upgrade ឥតគិតថ្លៃ! 🎁</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#ណែនាំថ្មី #រសជាតិថ្មី #កាហ្វេខ្មែរ</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#C8A27C;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Product Launch</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #1720 · limited, exclusive · holiday edition</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">A new sip story begins today. ☕💫<br><br>Cold Brew has officially joined our menu! Rich in flavor, crafted with care — this one's a game changer.<br><br>Available at all our branches now.</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#NewRelease #SpecialEdition #PhnomPenhCafe</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">រឿងនៃការពិសាថ្មីចាប់ផ្ដើមថ្ងៃនេះ។ ☕💫<br><br>Cold Brew ចូលម៉ឺនុយរបស់យើងហើយ! ជម្រៅរសជាតិ ផ្ទុកដោយចិត្ត — ការផ្លាស់ប្ដូរ!<br><br>មានឥឡូវនៅគ្រប់សាខា។</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#ម៉ឺនុយថ្មី #ភេសជ្ជៈថ្មី #កាហ្វេភ្នំពេញ</div>
+    </div>
+  </div>
+</div><h3 style="color:#5A3E2B;margin-top:28px">Daily Moment — 3 Random Samples</h3>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#7FA39C;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Daily Moment</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #2376 · refreshing, revitalizing · late night study</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Some days you need more than one cup. 😂☕<br><br>No judgment here. Our Butterfly Pea Latte is ready and waiting for you at Santhormok.<br><br>Tag a coffee addict you know! ☕❤️</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#MorningCoffee #DailyFuel #CafeVibes</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">ថ្ងៃខ្លះអ្នកត្រូវការជាងមួយកែវ! 😂☕<br><br>មិនជំទាស់ទេ! Butterfly Pea Latte របស់យើងត្រៀមរង់ចាំ at Santhormok!<br><br>Tag friend ស្រឡាញ់កាហ្វេ! ☕❤️</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#ពេលព្រឹក #WorkFromCafe #កាហ្វេ</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#7FA39C;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Daily Moment</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #181 · comforting, cozy · work from cafe</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Rainy day + Brown Sugar Latte = perfect combo. 🌧️☕<br><br>Don't let the rain ruin your mood. Come cozy up with us at Toul Tom Poung.<br><br>Warm drinks, warm vibes. Always. ❤️</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#AfternoonPick #CoffeeBreak #StudyFuel</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">ថ្ងៃភ្លៀង + Brown Sugar Latte = combo ល្អ! 🌧️☕<br><br>កុំឱ្យភ្លៀងខូចអារម្មណ៍! មកសម្រាកជាមួយយើង Toul Tom Poung!<br><br>ភេសជ្ជៈក្ដៅ Vibes ក្ដៅ! ❤️</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#ថ្ងៃចន្ទ #ចាប់ផ្តើមថ្ងៃ #GoodMorning</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#7FA39C;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Daily Moment</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #275 · comforting, cozy · Monday morning</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">That first sip of the morning — pure magic. ✨☕<br><br>Start your day right with our Avocado Coffee. Fresh brewed, full of flavor.<br><br>Available daily at Toul Kork.</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#StudySession #CoffeeAndWork #ProductiveCafe</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">ការពិសាដំបូងពេលព្រឹក — ជាការអស្ចារ្យ! ✨☕<br><br>ចាប់ផ្ដើមថ្ងៃល្អ ជាមួយ Avocado Coffee! ចំអិនស្រស់ ពោរពេញរសជាតិ!<br><br>មានរៀងរាល់ថ្ងៃ Toul Kork។</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#កាហ្វេពេលព្រឹក #កម្លាំងចិត្ត #ភ្នំពេញ</div>
+    </div>
+  </div>
+</div><h3 style="color:#5A3E2B;margin-top:28px">Promotion — 3 Random Samples</h3>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#E83F6F;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Promotion</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #2128 · generous, warm · Cambodian Independence Day</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Students, this one's for you! 🎓☕<br><br>Flash your student ID and enjoy 25% off on any drink, including our Mango Cold Brew.<br><br>Study fuel never felt this affordable. Come to Siem Reap!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#BOGO #SpecialOffer #HappyHour</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Students ម្នាក់ៗ! 🎓☕<br><br>បង្ហាញ Student ID ហើយ enjoy 25% off លើ Drink ណាក៏ដោយ រួមមាន Mango Cold Brew!<br><br>Study Fuel ថោកជាងនេះ! Come to Siem Reap!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#រង្វាន់ #ចំណុចទំនុកចិត្ត #CafePP</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#E83F6F;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Promotion</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #1368 · playful, energetic · weekday offer</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Bring your own cup, save money. ♻️☕<br><br>Use a reusable cup at BKK1 and enjoy 15% off on any drink including Croissant.<br><br>Good for you. Good for the planet. Win-win! 🌿</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#EarlyBird #MorningDeal #CoffeeDiscount</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">យក Cup ខ្លួន Save ប្រាក់! ♻️☕<br><br>ប្រើ Reusable Cup BKK1 ហើយ enjoy 15% off Drink ណាក៏ដោយ!<br><br>ល្អសម្រាប់អ្នក! ល្អសម្រាប់ Planet! Win-Win! 🌿</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#HappyHour #ពេលវេលាពិសេស #ប្រូម៉ូ</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#E83F6F;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Promotion</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #223 · playful, energetic · early bird offer</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">It's your birthday? Free coffee on us! 🎂☕<br><br>Celebrate your special day with a complimentary Taro Latte — because you deserve it.<br><br>Show us your birthday and come to Siem Reap this month!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#BirthdayPromo #FreeCoffee #CelebrateCoffee</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Birthday? Coffee ឥតគិតថ្លៃ! 🎂☕<br><br>святкуйте ថ្ងៃពិសេស ជាមួយ Taro Latte ឥតគិតថ្លៃ — ព្រោះអ្នកទទួលបានវា!<br><br>បង្ហាញ Birthday ហើយ come Siem Reap!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#ថោក #សន្សំប្រាក់ #ហ្វ្លែសស</div>
+    </div>
+  </div>
+</div><h3 style="color:#5A3E2B;margin-top:28px">Engagement — 3 Random Samples</h3>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#2274A5;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Engagement</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #1181 · playful, interactive · feedback request</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Quick question for our coffee fam! ☕❓<br><br>Hot coffee or iced coffee?<br><br>We know Taro Latte wins in this heat, but let's hear your take! Drop a ☕ for hot or 🧊 for iced!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#CaptionContest #CafeChallenge #TagUs</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Quick Question សម្រាប់ Coffee Fam! ☕❓<br><br>Hot Coffee ឬ Iced Coffee?<br><br>យើងដឹង Taro Latte ឈ្នះ ក្នុង Heat នេះ! Drop ☕ for Hot ឬ 🧊 for Iced!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#សំណួរ #Share #CafeFamily</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#2274A5;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Engagement</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #1785 · playful, interactive · caption contest</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Quick question for our coffee fam! ☕❓<br><br>Hot coffee or iced coffee?<br><br>We know Vietnamese Coffee wins in this heat, but let's hear your take! Drop a ☕ for hot or 🧊 for iced!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#TagYourCoffeeBuddy #CoffeeSquad #PhnomPenh</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Quick Question សម្រាប់ Coffee Fam! ☕❓<br><br>Hot Coffee ឬ Iced Coffee?<br><br>យើងដឹង Vietnamese Coffee ឈ្នះ ក្នុង Heat នេះ! Drop ☕ for Hot ឬ 🧊 for Iced!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#ជម្រើសអ្នក #ចូលចិត្តមួយណា #ហាងកាហ្វេ</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#2274A5;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Engagement</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #190 · playful, interactive · giveaway</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Coffee personality check! ☕🧠<br><br>Iced Latte = chill but productive.<br>Espresso = no time to waste.<br>Chocolate Frappe = you live your best life. 😂<br><br>Which one are you? Tell us below! 👇</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#CaptionContest #CafeChallenge #TagUs</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Coffee Personality Check! ☕🧠<br><br>Iced Latte = Chill but Productive!<br>Espresso = No Time!<br>Chocolate Frappe = Living Best Life! 😂<br><br>អ្នកជាប្រភេទណា? ប្រាប់ Comment ខាងក្រោម! 👇</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#ជម្រើសអ្នក #ចូលចិត្តមួយណា #ហាងកាហ្វេ</div>
+    </div>
+  </div>
+</div><h3 style="color:#5A3E2B;margin-top:28px">Brand Story — 3 Random Samples</h3>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#5A3E2B;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Brand Story</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #2115 · values-driven, sincere · Cambodian Independence Day</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">From the hills of Preah Vihear to your cup. 🌿☕<br><br>Every sip you take supports local Cambodian farmers who pour their heart into every harvest.<br><br>Thank you for drinking local. We're proud to serve you. 🙏</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#WomenFarmers #EmpowerLocal #CoffeeCause</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">ពី Hills Preah Vihear ដល់ Cup អ្នក! 🌿☕<br><br>Rip ណាក៏ដោយ គាំទ្រ Farmer Cambodian ក្នុងស្រុក ដែល Pour Heart!<br><br>អរគុណ Drink Local! ❤️</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#កាហ្វេខ្មែរ #ប្រភពខ្មែរ #SupportLocal</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#5A3E2B;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Brand Story</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #888 · educational, heartfelt · brewing spotlight</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Brewing excellence, one cup at a time. ☕✨<br><br>Our espresso machine process is designed to bring out the natural flavors of our Kampot beans — no shortcuts, no compromise.<br><br>Taste the craft at all branches.</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#FarmToCup #EthicalCoffee #KhmerCoffee</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Brewing Excellence ម្ដងមួយ Cup! ☕✨<br><br>espresso machine Process ផ្ដល់ Natural Flavors Kampot Beans — No Shortcuts No Compromise!<br><br>Taste the Craft all branches!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#រឿងរ៉ាវយើង #ផលិតផលខ្មែរ #មណ្ឌលគិរី</div>
+    </div>
+  </div>
+</div>
+<div style="border:1px solid #e0d6cc;border-radius:10px;padding:16px;margin-bottom:14px;background:#fffaf6">
+  <div style="margin-bottom:8px"><span style="background:#5A3E2B;color:#fff;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600">Brand Story</span>
+    <span style="color:#888;font-size:12px;margin-left:10px">ID #115 · local, proud · sustainability</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇬🇧 ENGLISH</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Sustainability isn't a trend for us — it's who we are. 🌿☕<br><br>From compostable cups to partnering with eco-friendly farms in Kep Province, every choice we make is for a greener tomorrow.<br><br>Drink good. Do good.</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#FarmToCup #EthicalCoffee #KhmerCoffee</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#5A3E2B;margin-bottom:4px">🇰🇭 KHMER</div>
+      <div style="font-size:13px;line-height:1.6;color:#333">Sustainability មិនមែន Trend — គឺ WHO WE ARE! 🌿☕<br><br>ពី Compostable Cups ដល់ Eco-Friendly Farms Kep Province ជំរើស ណាក៏ដោយ For Greener Tomorrow!<br><br>Drink Good! Do Good!</div>
+      <div style="margin-top:6px;font-size:11px;color:#7FA39C">#បរិស្ថាន #កាហ្វេបៃតង #EcoKH</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const CAT_COLORS = ['#C8A27C','#7FA39C','#E83F6F','#2274A5','#5A3E2B'];
+
+// 1. Category pie
+new Chart(document.getElementById('catPie'), {
+  type:'doughnut',
+  data:{
+    labels:["Product Launch", "Daily Moment", "Promotion", "Engagement", "Brand Story"],
+    datasets:[{data:[600, 700, 500, 400, 300],backgroundColor:CAT_COLORS,borderWidth:2}]
+  },
+  options:{plugins:{legend:{position:'right'}}}
+});
+
+// 2. KM ratio bar
+new Chart(document.getElementById('kmRatio'), {
+  type:'bar',
+  data:{
+    labels:["0-20%", "20-40%", "40-60%", "60-80%", "80-100%"],
+    datasets:[{label:'Captions',data:[247, 616, 619, 791, 227],backgroundColor:'#7FA39C',borderRadius:6}]
+  },
+  options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+});
+
+// 3. EN length hist
+new Chart(document.getElementById('enLen'), {
+  type:'bar',
+  data:{
+    labels:["0-50", "50-100", "100-150", "150-200", "200-250", "250-300", "300-350", "350-400", "400-450", "450-500", "500-550", "550-600"],
+    datasets:[{label:'EN Captions',data:[0, 0, 191, 2073, 236, 0, 0, 0, 0, 0, 0, 0],backgroundColor:'#C8A27C',borderRadius:4}]
+  },
+  options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+});
+
+// 4. KM length hist
+new Chart(document.getElementById('kmLen'), {
+  type:'bar',
+  data:{
+    labels:["0-50", "50-100", "100-150", "150-200", "200-250", "250-300", "300-350", "350-400", "400-450", "450-500", "500-550", "550-600"],
+    datasets:[{label:'KM Captions',data:[0, 21, 1831, 648, 0, 0, 0, 0, 0, 0, 0, 0],backgroundColor:'#5A3E2B',borderRadius:4}]
+  },
+  options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+});
+
+// 5. Top products
+new Chart(document.getElementById('topProducts'), {
+  type:'bar',
+  data:{
+    labels:["Cold Brew", "Single-Origin Espresso", "Cheese Cake", "Coconut Cold Brew", "Croissant", "Mango Frappe", "Butterfly Pea Latte", "Peppermint Mocha", "Cappuccino", "Taro Latte", "Mango Cold Brew", "Chai Latte", "Cortado", "Pumpkin Spice Latte", "Iced Latte"],
+    datasets:[{label:'Count',data:[91, 70, 57, 56, 55, 54, 54, 52, 52, 51, 51, 50, 50, 50, 50],backgroundColor:'#E83F6F',borderRadius:4}]
+  },
+  options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
+});
+
+// 6. Top moods
+new Chart(document.getElementById('topMoods'), {
+  type:'bar',
+  data:{
+    labels:["lighthearted, relatable", "playful, interactive", "relaxing, calm", "productive, focused", "curious, conversational", "urgent, exciting", "comforting, cozy", "limited-time, urgent", "fun, community-focused", "cheerful, uplifting", "refreshing, revitalizing", "festive, generous"],
+    datasets:[{label:'Count',data:[110, 110, 102, 101, 94, 93, 92, 88, 86, 85, 85, 84],backgroundColor:'#2274A5',borderRadius:4}]
+  },
+  options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
+});
+
+// 7. Top occasions
+new Chart(document.getElementById('topOcc'), {
+  type:'bar',
+  data:{
+    labels:["Chinese New Year", "Khmer New Year", "Cambodian Independence Day", "King's Birthday", "collab launch", "new branch opening", "Pchum Ben", "premium range debut", "morning ritual", "new menu launch", "flash sale", "seasonal launch"],
+    datasets:[{label:'Count',data:[75, 71, 58, 58, 56, 54, 53, 52, 52, 52, 50, 50],backgroundColor:'#C8A27C',borderRadius:4}]
+  },
+  options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
+});
+
+// 8. Promotions
+new Chart(document.getElementById('topPromos'), {
+  type:'bar',
+  data:{
+    labels:["None", "new menu item", "seasonal special", "limited edition", "giveaway prize", "loyalty points", "flash sale 30% off", "student discount 15%", "free size upgrade", "referral discount", "happy hour 2-for-1", "Buy 1 Get 1 Free"],
+    datasets:[{label:'Count',data:[1301, 150, 149, 140, 131, 129, 58, 57, 57, 54, 50, 48],backgroundColor:'#7FA39C',borderRadius:4}]
+  },
+  options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}
+});
+
+// 9. Audience
+new Chart(document.getElementById('audChart'), {
+  type:'doughnut',
+  data:{
+    labels:["locals, all ages", "young professionals, 18-35", "families", "working adults, 25-40", "remote workers", "coffee enthusiasts", "expats and tourists", "students, 18-25"],
+    datasets:[{data:[351, 328, 310, 307, 305, 304, 302, 293],
+      backgroundColor:['#C8A27C','#7FA39C','#E83F6F','#2274A5','#5A3E2B',
+                       '#D4A017','#6B4226','#3D5A80','#B5838D','#264653'],
+      borderWidth:2}]
+  },
+  options:{plugins:{legend:{position:'right'}}}
+});
+</script>
+</body>
+</html>

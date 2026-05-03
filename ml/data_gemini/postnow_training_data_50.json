@@ -1,0 +1,1366 @@
+{
+  "dataset_info": {
+    "total_captions": 50,
+    "language_pair": "en-km",
+    "created_for": "POSTNOW mBART fine-tuning",
+    "categories": {
+      "product_launch": 12,
+      "daily_moment": 14,
+      "promotion": 10,
+      "engagement": 8,
+      "brand_story": 6
+    }
+  },
+  "captions": [
+    {
+      "id": 48,
+      "category": "brand_story",
+      "metadata": {
+        "product": "Coconut Cold Brew",
+        "promotion": null,
+        "mood": "authentic, inspiring",
+        "occasion": "brand heritage",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Beyond the cup. 🇰🇭❤️\n\nWe source our beans directly from farmers in Mondulkiri to bring you the authentic taste of Cambodia. Quality you can trust.\n\nSupport local. Drink local. ✨",
+        "km": "លើសពីកាហ្វេមួយកែវ។ 🇰🇭❤️\n\nយើងប្រើប្រាស់គ្រាប់កាហ្វេដោយផ្ទាល់ពីបងៗកសិករនៅខេត្តមណ្ឌលគិរី ដើម្បីនាំមកជូនអ្នកនូវរសជាតិពិតនៃគ្រាប់ការហ្វេនៅប្រទេសកម្ពុជា។ គុណភាពដែលអ្នកអាចទុកចិត្តបាន។\n\nគាំទ្រផលិតផលក្នុងស្រុក។ ✨"
+      },
+      "hashtags": {
+        "en": [
+          "#BrandStory",
+          "#SupportLocal",
+          "#MondulkiriCoffee"
+        ],
+        "km": [
+          "#គោលដៅយើង",
+          "#ផលិតផលខ្មែរ",
+          "#មណ្ឌលគិរី"
+        ]
+      }
+    },
+    {
+      "id": 31,
+      "category": "promotion",
+      "metadata": {
+        "product": "Dirty Coffee",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Dirty Coffee from 2 PM - 5 PM today only! Don't miss this deal at Santhormok.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Dirty Coffee ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា Santhormok។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "category": "promotion",
+      "metadata": {
+        "product": "Caramel Macchiato",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Caramel Macchiato from 2 PM - 5 PM today only! Don't miss this deal at Russian Market.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Caramel Macchiato ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា Russian Market។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Uji Matcha Latte",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Uji Matcha Latte—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Uji Matcha Latte—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#UjiMatchaLatte",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Pandan Latte",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Pandan Latte—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Pandan Latte—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#PandanLatte",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Uji Matcha Latte",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Uji Matcha Latte and you're ready to take on the day. See you at our Riverside branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Uji Matcha Latte នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Riverside!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Uji Matcha Latte",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Uji Matcha Latte and you're ready to take on the day. See you at our BKK1 branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Uji Matcha Latte នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា BKK1!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Uji Matcha Latte",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Uji Matcha Latte—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Uji Matcha Latte—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#UjiMatchaLatte",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Dirty Coffee",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Dirty Coffee—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Dirty Coffee—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#DirtyCoffee",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Passion Frappe",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Passion Frappe—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Passion Frappe—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#PassionFrappe",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 29,
+      "category": "promotion",
+      "metadata": {
+        "product": "Butterfly Pea Latte",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Butterfly Pea Latte from 2 PM - 5 PM today only! Don't miss this deal at Riverside.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Butterfly Pea Latte ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា Riverside។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Pandan Latte",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Pandan Latte and you're ready to take on the day. See you at our Toul Tom Poung branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Pandan Latte នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Toul Tom Poung!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 27,
+      "category": "promotion",
+      "metadata": {
+        "product": "Cappuccino",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Cappuccino from 2 PM - 5 PM today only! Don't miss this deal at Siem Reap.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Cappuccino ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា Siem Reap។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Coconut Cold Brew",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Coconut Cold Brew—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Coconut Cold Brew—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#CoconutColdBrew",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 46,
+      "category": "brand_story",
+      "metadata": {
+        "product": "Cappuccino",
+        "promotion": null,
+        "mood": "authentic, inspiring",
+        "occasion": "brand heritage",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Beyond the cup. 🇰🇭❤️\n\nWe source our beans directly from farmers in Mondulkiri to bring you the authentic taste of Cambodia. Quality you can trust.\n\nSupport local. Drink local. ✨",
+        "km": "លើសពីកាហ្វេមួយកែវ។ 🇰🇭❤️\n\nយើងប្រើប្រាស់គ្រាប់កាហ្វេដោយផ្ទាល់ពីកសិករនៅមណ្ឌលគិរី ដើម្បីនាំមកជូនអ្នកនូវរសជាតិពិតនៃកម្ពុជា។ គុណភាពដែលអ្នកអាចទុកចិត្តបាន។\n\nគាំទ្រផលិតផលក្នុងស្រុក។ ✨"
+      },
+      "hashtags": {
+        "en": [
+          "#BrandStory",
+          "#SupportLocal",
+          "#MondulkiriCoffee"
+        ],
+        "km": [
+          "#រឿងរ៉ាវយើង",
+          "#ផលិតផលខ្មែរ",
+          "#មណ្ឌលគិរី"
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Dirty Coffee",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Dirty Coffee—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Dirty Coffee—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#DirtyCoffee",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 44,
+      "category": "engagement",
+      "metadata": {
+        "product": "Passion Frappe",
+        "promotion": null,
+        "mood": "playful, community",
+        "occasion": "weekend poll",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "What’s your go-to vibe today? 🤔☕️\n\nAre you Team Passion Frappe or Team Americano? Let us know your favorite in the comments below! 👇✨",
+        "km": "តើអារម្មណ៍អ្នកថ្ងៃនេះចង់ញ៉ាំអ្វីជាងគេ? 🤔☕️\n\nតើអ្នកជា Team Passion Frappe ឬ Team Americano? ប្រាប់យើងពីចំណូលចិត្តរបស់អ្នកនៅក្នុង comment ខាងក្រោមមក! 👇✨"
+      },
+      "hashtags": {
+        "en": [
+          "#CoffeeDebate",
+          "#WhichOne",
+          "#Community"
+        ],
+        "km": [
+          "#ជម្រើសអ្នក",
+          "#ចូលចិត្តមួយណា",
+          "#ហាងកាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 35,
+      "category": "promotion",
+      "metadata": {
+        "product": "Americano",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Americano from 2 PM - 5 PM today only! Don't miss this deal at Russian Market.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Americano ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា Russian Market។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 34,
+      "category": "promotion",
+      "metadata": {
+        "product": "Iced Latte",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Iced Latte from 2 PM - 5 PM today only! Don't miss this deal at BKK1.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Iced Latte ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា BKK1។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Pandan Latte",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Pandan Latte—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Pandan Latte—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#PandanLatte",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Dirty Coffee",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Dirty Coffee—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Dirty Coffee—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#DirtyCoffee",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Pandan Latte",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Pandan Latte and you're ready to take on the day. See you at our Toul Tom Poung branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Pandan Latte នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Toul Tom Poung!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Passion Frappe",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Passion Frappe and you're ready to take on the day. See you at our Riverside branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Passion Frappe នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Riverside!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Avocado Coffee",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Avocado Coffee—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Avocado Coffee—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#AvocadoCoffee",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 38,
+      "category": "engagement",
+      "metadata": {
+        "product": "Passion Frappe",
+        "promotion": null,
+        "mood": "playful, community",
+        "occasion": "weekend poll",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "What’s your go-to vibe today? 🤔☕️\n\nAre you Team Passion Frappe or Team Americano? Let us know your favorite in the comments below! 👇✨",
+        "km": "តើអារម្មណ៍អ្នកថ្ងៃនេះចង់ញ៉ាំអ្វីជាងគេ? 🤔☕️\n\nតើអ្នកជា Team Passion Frappe ឬ Team Americano? ប្រាប់យើងពីចំណូលចិត្តរបស់អ្នកនៅក្នុង comment ខាងក្រោមមក! 👇✨"
+      },
+      "hashtags": {
+        "en": [
+          "#CoffeeDebate",
+          "#WhichOne",
+          "#Community"
+        ],
+        "km": [
+          "#ជម្រើសអ្នក",
+          "#ចូលចិត្តមួយណា",
+          "#ហាងកាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 39,
+      "category": "engagement",
+      "metadata": {
+        "product": "Caramel Macchiato",
+        "promotion": null,
+        "mood": "playful, community",
+        "occasion": "weekend poll",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "What’s your go-to vibe today? 🤔☕️\n\nAre you Team Caramel Macchiato or Team Americano? Let us know your favorite in the comments below! 👇✨",
+        "km": "តើអារម្មណ៍អ្នកថ្ងៃនេះចង់ញ៉ាំអ្វីជាងគេ? 🤔☕️\n\nតើអ្នកជា Team Caramel Macchiato ឬ Team Americano? ប្រាប់យើងពីចំណូលចិត្តរបស់អ្នកនៅក្នុង comment ខាងក្រោមមក! 👇✨"
+      },
+      "hashtags": {
+        "en": [
+          "#CoffeeDebate",
+          "#WhichOne",
+          "#Community"
+        ],
+        "km": [
+          "#ជម្រើសអ្នក",
+          "#ចូលចិត្តមួយណា",
+          "#ហាងកាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Caramel Macchiato",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Caramel Macchiato and you're ready to take on the day. See you at our Santhormok branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Caramel Macchiato នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Santhormok!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 43,
+      "category": "engagement",
+      "metadata": {
+        "product": "Butterfly Pea Latte",
+        "promotion": null,
+        "mood": "playful, community",
+        "occasion": "weekend poll",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "What’s your go-to vibe today? 🤔☕️\n\nAre you Team Butterfly Pea Latte or Team Americano? Let us know your favorite in the comments below! 👇✨",
+        "km": "តើអារម្មណ៍អ្នកថ្ងៃនេះចង់ញ៉ាំអ្វីជាងគេ? 🤔☕️\n\nតើអ្នកជា Team Butterfly Pea Latte ឬ Team Americano? ប្រាប់យើងពីចំណូលចិត្តរបស់អ្នកនៅក្នុង comment ខាងក្រោមមក! 👇✨"
+      },
+      "hashtags": {
+        "en": [
+          "#CoffeeDebate",
+          "#WhichOne",
+          "#Community"
+        ],
+        "km": [
+          "#ជម្រើសអ្នក",
+          "#ចូលចិត្តមួយណា",
+          "#ហាងកាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Avocado Coffee",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Avocado Coffee—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Avocado Coffee—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#AvocadoCoffee",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 28,
+      "category": "promotion",
+      "metadata": {
+        "product": "Honey Lemon Ginger",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Honey Lemon Ginger from 2 PM - 5 PM today only! Don't miss this deal at BKK1.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Honey Lemon Ginger ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា BKK1។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Caramel Macchiato",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Caramel Macchiato and you're ready to take on the day. See you at our Toul Tom Poung branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Caramel Macchiato នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Toul Tom Poung!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Coconut Cold Brew",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Coconut Cold Brew and you're ready to take on the day. See you at our Russian Market branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Coconut Cold Brew នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Russian Market!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 45,
+      "category": "brand_story",
+      "metadata": {
+        "product": "Pandan Latte",
+        "promotion": null,
+        "mood": "authentic, inspiring",
+        "occasion": "brand heritage",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Beyond the cup. 🇰🇭❤️\n\nWe source our beans directly from farmers in Mondulkiri to bring you the authentic taste of Cambodia. Quality you can trust.\n\nSupport local. Drink local. ✨",
+        "km": "លើសពីកាហ្វេមួយកែវ។ 🇰🇭❤️\n\nយើងប្រើប្រាស់គ្រាប់កាហ្វេដោយផ្ទាល់ពីកសិករនៅមណ្ឌលគិរី ដើម្បីនាំមកជូនអ្នកនូវរសជាតិពិតនៃកម្ពុជា។ គុណភាពដែលអ្នកអាចទុកចិត្តបាន។\n\nគាំទ្រផលិតផលក្នុងស្រុក។ ✨"
+      },
+      "hashtags": {
+        "en": [
+          "#BrandStory",
+          "#SupportLocal",
+          "#MondulkiriCoffee"
+        ],
+        "km": [
+          "#រឿងរ៉ាវយើង",
+          "#ផលិតផលខ្មែរ",
+          "#មណ្ឌលគិរី"
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Coconut Cold Brew",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Coconut Cold Brew and you're ready to take on the day. See you at our Santhormok branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Coconut Cold Brew នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Santhormok!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Passion Frappe",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Passion Frappe and you're ready to take on the day. See you at our Riverside branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Passion Frappe នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Riverside!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Butterfly Pea Latte",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Butterfly Pea Latte and you're ready to take on the day. See you at our Russian Market branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Butterfly Pea Latte នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Russian Market!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 49,
+      "category": "brand_story",
+      "metadata": {
+        "product": "Cappuccino",
+        "promotion": null,
+        "mood": "authentic, inspiring",
+        "occasion": "brand heritage",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Beyond the cup. 🇰🇭❤️\n\nWe source our beans directly from farmers in Mondulkiri to bring you the authentic taste of Cambodia. Quality you can trust.\n\nSupport local. Drink local. ✨",
+        "km": "លើសពីកាហ្វេមួយកែវ។ 🇰🇭❤️\n\nយើងប្រើប្រាស់គ្រាប់កាហ្វេដោយផ្ទាល់ពីកសិករនៅមណ្ឌលគិរី ដើម្បីនាំមកជូនអ្នកនូវរសជាតិពិតនៃកម្ពុជា។ គុណភាពដែលអ្នកអាចទុកចិត្តបាន។\n\nគាំទ្រផលិតផលក្នុងស្រុក។ ✨"
+      },
+      "hashtags": {
+        "en": [
+          "#BrandStory",
+          "#SupportLocal",
+          "#MondulkiriCoffee"
+        ],
+        "km": [
+          "#រឿងរ៉ាវយើង",
+          "#ផលិតផលខ្មែរ",
+          "#មណ្ឌលគិរី"
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "category": "promotion",
+      "metadata": {
+        "product": "Iced Latte",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Iced Latte from 2 PM - 5 PM today only! Don't miss this deal at Siem Reap.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Iced Latte ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា Siem Reap។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 50,
+      "category": "brand_story",
+      "metadata": {
+        "product": "Caramel Macchiato",
+        "promotion": null,
+        "mood": "authentic, inspiring",
+        "occasion": "brand heritage",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Beyond the cup. 🇰🇭❤️\n\nWe source our beans directly from farmers in Mondulkiri to bring you the authentic taste of Cambodia. Quality you can trust.\n\nSupport local. Drink local. ✨",
+        "km": "លើសពីកាហ្វេមួយកែវ។ 🇰🇭❤️\n\nយើងប្រើប្រាស់គ្រាប់កាហ្វេដោយផ្ទាល់ពីកសិករនៅមណ្ឌលគិរី ដើម្បីនាំមកជូនអ្នកនូវរសជាតិពិតនៃកម្ពុជា។ គុណភាពដែលអ្នកអាចទុកចិត្តបាន។\n\nគាំទ្រផលិតផលក្នុងស្រុក។ ✨"
+      },
+      "hashtags": {
+        "en": [
+          "#BrandStory",
+          "#SupportLocal",
+          "#MondulkiriCoffee"
+        ],
+        "km": [
+          "#រឿងរ៉ាវយើង",
+          "#ផលិតផលខ្មែរ",
+          "#មណ្ឌលគិរី"
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Coconut Cold Brew",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Coconut Cold Brew and you're ready to take on the day. See you at our BKK1 branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Coconut Cold Brew នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា BKK1!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 40,
+      "category": "engagement",
+      "metadata": {
+        "product": "Avocado Coffee",
+        "promotion": null,
+        "mood": "playful, community",
+        "occasion": "weekend poll",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "What’s your go-to vibe today? 🤔☕️\n\nAre you Team Avocado Coffee or Team Americano? Let us know your favorite in the comments below! 👇✨",
+        "km": "តើអារម្មណ៍អ្នកថ្ងៃនេះចង់ញ៉ាំអ្វីជាងគេ? 🤔☕️\n\nតើអ្នកជា Team Avocado Coffee ឬ Team Americano? ប្រាប់យើងពីចំណូលចិត្តរបស់អ្នកនៅក្នុង comment ខាងក្រោមមក! 👇✨"
+      },
+      "hashtags": {
+        "en": [
+          "#CoffeeDebate",
+          "#WhichOne",
+          "#Community"
+        ],
+        "km": [
+          "#ជម្រើសអ្នក",
+          "#ចូលចិត្តមួយណា",
+          "#ហាងកាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Avocado Coffee",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Avocado Coffee and you're ready to take on the day. See you at our Toul Tom Poung branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Avocado Coffee នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Toul Tom Poung!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "category": "product_launch",
+      "metadata": {
+        "product": "Avocado Coffee",
+        "promotion": "new menu item",
+        "mood": "exciting, fresh",
+        "occasion": "seasonal launch",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Something new is brewing! ☕️✨\n\nMeet our Avocado Coffee—crafted for the perfect balance of flavor and freshness. Now available at all branches!\n\nCome try it today! 👇",
+        "km": "អ្វីដែលថ្មីបានមកដល់ហើយ! ☕️✨\n\nសូមណែនាំ Avocado Coffee—ដែលចម្រាញ់ចេញពីតុល្យភាពនៃរសជាតិ និងភាពស្រស់ស្រាយ។ មានលក់នៅគ្រប់សាខាទាំងអស់!\n\nមកសាកល្បងថ្ងៃនេះទាំងអស់គ្នា! 👇"
+      },
+      "hashtags": {
+        "en": [
+          "#NewMenu",
+          "#AvocadoCoffee",
+          "#CoffeePP"
+        ],
+        "km": [
+          "#ម៉ឺនុយថ្មី",
+          "#ហាងកាហ្វេ",
+          "#ភេសជ្ជៈថ្មី"
+        ]
+      }
+    },
+    {
+      "id": 37,
+      "category": "engagement",
+      "metadata": {
+        "product": "Uji Matcha Latte",
+        "promotion": null,
+        "mood": "playful, community",
+        "occasion": "weekend poll",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "What’s your go-to vibe today? 🤔☕️\n\nAre you Team Uji Matcha Latte or Team Americano? Let us know your favorite in the comments below! 👇✨",
+        "km": "តើអារម្មណ៍អ្នកថ្ងៃនេះចង់ញ៉ាំអ្វីជាងគេ? 🤔☕️\n\nតើអ្នកជា Team Uji Matcha Latte ឬ Team Americano? ប្រាប់យើងពីចំណូលចិត្តរបស់អ្នកនៅក្នុង comment ខាងក្រោមមក! 👇✨"
+      },
+      "hashtags": {
+        "en": [
+          "#CoffeeDebate",
+          "#WhichOne",
+          "#Community"
+        ],
+        "km": [
+          "#ជម្រើសអ្នក",
+          "#ចូលចិត្តមួយណា",
+          "#ហាងកាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "category": "daily_moment",
+      "metadata": {
+        "product": "Pandan Latte",
+        "promotion": null,
+        "mood": "energizing, productive",
+        "occasion": "morning fuel",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "The only way to start your morning right. ☀️\n\nA cup of Pandan Latte and you're ready to take on the day. See you at our Siem Reap branch!\n\nTag a coffee lover! ❤️",
+        "km": "វិធីតែមួយគត់ដើម្បីចាប់ផ្តើមព្រឹកព្រលឹមដ៏ល្អ។ ☀️\n\nមួយកែវនៃ Pandan Latte នឹងជួយឱ្យអ្នកត្រៀមខ្លួនសម្រាប់ថ្ងៃថ្មី។ ជួបគ្នានៅសាខា Siem Reap!\n\nTag អ្នកចូលចិត្តកាហ្វេមក! ❤️"
+      },
+      "hashtags": {
+        "en": [
+          "#MorningCoffee",
+          "#DailyFuel",
+          "#CafeVibes"
+        ],
+        "km": [
+          "#កាហ្វេពេលព្រឹក",
+          "#កម្លាំងចិត្ត",
+          "#PhnomPenh"
+        ]
+      }
+    },
+    {
+      "id": 36,
+      "category": "promotion",
+      "metadata": {
+        "product": "Butterfly Pea Latte",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Butterfly Pea Latte from 2 PM - 5 PM today only! Don't miss this deal at Siem Reap.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Butterfly Pea Latte ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា Siem Reap។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 41,
+      "category": "engagement",
+      "metadata": {
+        "product": "Passion Frappe",
+        "promotion": null,
+        "mood": "playful, community",
+        "occasion": "weekend poll",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "What’s your go-to vibe today? 🤔☕️\n\nAre you Team Passion Frappe or Team Americano? Let us know your favorite in the comments below! 👇✨",
+        "km": "តើអារម្មណ៍អ្នកថ្ងៃនេះចង់ញ៉ាំអ្វីជាងគេ? 🤔☕️\n\nតើអ្នកជា Team Passion Frappe ឬ Team Americano? ប្រាប់យើងពីចំណូលចិត្តរបស់អ្នកនៅក្នុង comment ខាងក្រោមមក! 👇✨"
+      },
+      "hashtags": {
+        "en": [
+          "#CoffeeDebate",
+          "#WhichOne",
+          "#Community"
+        ],
+        "km": [
+          "#ជម្រើសអ្នក",
+          "#ចូលចិត្តមួយណា",
+          "#ហាងកាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 47,
+      "category": "brand_story",
+      "metadata": {
+        "product": "Pandan Latte",
+        "promotion": null,
+        "mood": "authentic, inspiring",
+        "occasion": "brand heritage",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "Beyond the cup. 🇰🇭❤️\n\nWe source our beans directly from farmers in Mondulkiri to bring you the authentic taste of Cambodia. Quality you can trust.\n\nSupport local. Drink local. ✨",
+        "km": "លើសពីកាហ្វេមួយកែវ។ 🇰🇭❤️\n\nយើងប្រើប្រាស់គ្រាប់កាហ្វេដោយផ្ទាល់ពីកសិករនៅមណ្ឌលគិរី ដើម្បីនាំមកជូនអ្នកនូវរសជាតិពិតនៃកម្ពុជា។ គុណភាពដែលអ្នកអាចទុកចិត្តបាន។\n\nគាំទ្រផលិតផលក្នុងស្រុក។ ✨"
+      },
+      "hashtags": {
+        "en": [
+          "#BrandStory",
+          "#SupportLocal",
+          "#MondulkiriCoffee"
+        ],
+        "km": [
+          "#រឿងរ៉ាវយើង",
+          "#ផលិតផលខ្មែរ",
+          "#មណ្ឌលគិរី"
+        ]
+      }
+    },
+    {
+      "id": 42,
+      "category": "engagement",
+      "metadata": {
+        "product": "Americano",
+        "promotion": null,
+        "mood": "playful, community",
+        "occasion": "weekend poll",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "What’s your go-to vibe today? 🤔☕️\n\nAre you Team Americano or Team Americano? Let us know your favorite in the comments below! 👇✨",
+        "km": "តើអារម្មណ៍អ្នកថ្ងៃនេះចង់ញ៉ាំអ្វីជាងគេ? 🤔☕️\n\nតើអ្នកជា Team Americano ឬ Team Americano? ប្រាប់យើងពីចំណូលចិត្តរបស់អ្នកនៅក្នុង comment ខាងក្រោមមក! 👇✨"
+      },
+      "hashtags": {
+        "en": [
+          "#CoffeeDebate",
+          "#WhichOne",
+          "#Community"
+        ],
+        "km": [
+          "#ជម្រើសអ្នក",
+          "#ចូលចិត្តមួយណា",
+          "#ហាងកាហ្វេ"
+        ]
+      }
+    },
+    {
+      "id": 33,
+      "category": "promotion",
+      "metadata": {
+        "product": "Pandan Latte",
+        "promotion": "Buy 1 Get 1 Free",
+        "mood": "urgent, exciting",
+        "occasion": "Happy Hour",
+        "target_audience": "young professionals, students"
+      },
+      "caption": {
+        "en": "HAPPY HOUR ALERT! 📢✨\n\nBuy 1 Get 1 FREE on our Pandan Latte from 2 PM - 5 PM today only! Don't miss this deal at Riverside.\n\nGrab a friend and come over! 🏃‍♂️💨",
+        "km": "HAPPY HOUR មកដល់ហើយ! 📢✨\n\nទិញ ១ ថែម ១ ឥតគិតថ្លៃ សម្រាប់ Pandan Latte ចាប់ពីម៉ោង ២ រសៀល ដល់ ៥ ល្ងាច ថ្ងៃនេះតែប៉ុណ្ណោះ! កុំឱ្យរំលងឱកាសនេះនៅសាខា Riverside។\n\nបបួលមិត្តភក្តិមកឥឡូវនេះ! 🏃‍♂️💨"
+      },
+      "hashtags": {
+        "en": [
+          "#BOGO",
+          "#SpecialOffer",
+          "#HappyHour"
+        ],
+        "km": [
+          "#ប្រូម៉ូសិន",
+          "#ទិញ១ថែម១",
+          "#កាហ្វេ"
+        ]
+      }
+    }
+  ]
+}

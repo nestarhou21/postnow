@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>POSTNOW | Artisanal Marketing in Minutes</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&amp;family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-fixed-dim": "#c3c6cf",
+              "on-primary-fixed": "#2c1700",
+              "on-secondary-fixed-variant": "#5e402f",
+              "primary-container": "#c8a27c",
+              "on-surface-variant": "#4f453c",
+              "on-tertiary-fixed": "#181c22",
+              "on-primary-fixed-variant": "#5d4123",
+              "surface-container": "#f4ede5",
+              "background": "#fff8f1",
+              "on-primary-container": "#53381b",
+              "surface-container-high": "#eee7df",
+              "tertiary-container": "#a5a9b1",
+              "primary": "#775838",
+              "tertiary": "#5b5e66",
+              "surface-variant": "#e8e1da",
+              "inverse-surface": "#33302b",
+              "on-secondary-container": "#795845",
+              "on-secondary": "#ffffff",
+              "on-secondary-fixed": "#2d1608",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#43474e",
+              "surface-tint": "#775838",
+              "secondary-fixed": "#ffdbca",
+              "error-container": "#ffdad6",
+              "secondary-fixed-dim": "#e9bda7",
+              "primary-fixed-dim": "#e8bf97",
+              "on-surface": "#1e1b17",
+              "surface": "#fff8f1",
+              "secondary": "#795745",
+              "on-error-container": "#93000a",
+              "on-primary": "#ffffff",
+              "outline-variant": "#d3c4b8",
+              "surface-container-low": "#f9f3eb",
+              "surface-bright": "#fff8f1",
+              "inverse-on-surface": "#f7f0e8",
+              "inverse-primary": "#e8bf97",
+              "surface-dim": "#dfd9d1",
+              "on-error": "#ffffff",
+              "error": "#ba1a1a",
+              "on-background": "#1e1b17",
+              "tertiary-fixed": "#dfe2eb",
+              "secondary-container": "#fed1b9",
+              "outline": "#81756b",
+              "on-tertiary-container": "#3a3e45",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#ffdcbc",
+              "surface-container-highest": "#e8e1da"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-navy-black { background-color: #1A1A1A; }
+        .bg-cocoa-brown { background-color: #3D2314; }
+        .bg-lavender-gray { background-color: #E9ECF5; }
+        .perspective-lg { perspective: 1000px; }
+        .rotate-y-12 { transform: rotateY(-12deg) rotateX(5deg); }
+        .rotate-y-neg-12 { transform: rotateY(12deg) rotateX(5deg); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-stone-950 shadow-2xl no-border">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#C8A27C]" style="font-variation-settings: 'FILL' 1;">coffee</span>
+<span class="text-xl font-extrabold text-[#C8A27C] font-['Plus_Jakarta_Sans'] tracking-tight">POSTNOW</span>
+</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-[#C8A27C] font-bold font-['Plus_Jakarta_Sans'] tracking-tight hover:text-[#C8A27C] transition-colors" href="#">Home</a>
+<a class="text-stone-400 font-['Plus_Jakarta_Sans'] tracking-tight hover:text-[#C8A27C] transition-colors" href="#">Features</a>
+<a class="text-stone-400 font-['Plus_Jakarta_Sans'] tracking-tight hover:text-[#C8A27C] transition-colors" href="#">Gallery</a>
+</nav>
+<button class="bg-[#C8A27C] text-on-primary-container px-6 py-2 rounded-full font-bold scale-95 active:scale-90 transition-transform">
+            Try for free
+        </button>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="bg-navy-black pt-32 pb-24 overflow-hidden">
+<div class="max-container px-6 lg:px-12 grid lg:grid-cols-2 gap-16 items-center">
+<div class="z-10">
+<h1 class="font-headline text-5xl lg:text-7xl font-extrabold text-surface-bright leading-tight tracking-tighter mb-6">
+                        Marketing in Minutes.
+                    </h1>
+<p class="text-stone-400 text-lg lg:text-xl mb-10 max-w-lg leading-relaxed">
+                        AI-generated posters and captions for your coffee shop. No designer needed. 
+                        Professional branding at the press of a button.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="px-8 py-4 rounded-full bg-gradient-to-r from-primary to-primary-container text-white font-bold text-lg shadow-xl hover:scale-105 transition-transform">
+                            Try for free
+                        </button>
+<button class="px-8 py-4 rounded-full border border-stone-700 text-stone-300 font-bold text-lg hover:bg-stone-800 transition-colors">
+                            See examples
+                        </button>
+</div>
+</div>
+<div class="relative flex justify-center items-center">
+<!-- Warm Glow -->
+<div class="absolute w-[120%] h-[120%] bg-primary/20 rounded-full blur-[100px]"></div>
+<!-- 3D Mascot -->
+<div class="relative z-10 w-64 lg:w-80 h-64 lg:h-80">
+<img alt="POSTNOW Mascot" class="w-full h-full object-contain drop-shadow-2xl" data-alt="3D render of a friendly light brown robot with orange round glasses waving its hand" src="https://lh3.googleusercontent.com/aida/ADBb0ujJtxu_pbYDk9eVNTkWA8kYuAWj7uKI32bbV0EjjLruXoMUAXkMznbF6FFYzZweAAnKF7ecKY4GgMF7wWiMtbxwtcuoBYlu-30velYo8pOSQ-Z6-wSlpQVdyxfmcrVXGLiURe9AGSoEwqsCb3MZHXvJ9C1HiaYRL-ZTHeeTx5hOp8rAK15YgC6jjer3Eyfd2C1z0_wNH1YnNG9HY1wZkERyEO4MFd2FQkQ3ZaTd2PPARFJAsI4lOPGNVZtnOmMtpD11yOO0BfPhBQ"/>
+<!-- Floating Poster Cards -->
+<div class="absolute -top-10 -right-10 w-32 h-44 bg-surface rounded-xl shadow-2xl rotate-12 p-2 overflow-hidden border border-white/10">
+<img alt="Promo Card 1" class="w-full h-full object-cover rounded-lg" data-alt="Modern social media poster for a coffee shop featuring detailed latte art and bold typography for a buy one get one deal" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXAsgTS_8BEhu9EsJ3-h49w5Vfjs9vry2okhGxtmqiyouF2RIB4UQS3GNaMhQ0vdbs-z4Qp8QP3IsGlQ4bhHiZGAmWG40Cncw_t8moZXaVT7pgDSD1NXJCjBz1wyyMkcH7PJpl2xfqBhD9lOjiYsBBrbWrLcY8dF0sTYGHx8rQZz8GYRU9EFGt9K924d_SGeQy1tKBfRM0NtJPlwttAirW8liVoiGqo6cvnxJHe7Fo-vJ3CTga6U7xGiamOlxHdga8dewTaZOjCXg"/>
+</div>
+<div class="absolute bottom-0 -left-12 w-32 h-44 bg-surface rounded-xl shadow-2xl -rotate-12 p-2 overflow-hidden border border-white/10">
+<img alt="Promo Card 2" class="w-full h-full object-cover rounded-lg" data-alt="Minimalist coffee shop advertisement with a steaming mug on a wooden table and soft morning sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrYB9EoYvtn9WGjOISp-aDjsP65Sx_K8HIWYEz-aTXwPZI0raHjyDso44B75pKHxtm8lbcFzFOjcSUNEESb5BhniDhMH5Ttj_1z0fNbvbiOMiZcYmZDD1xpPRn6oncWMRgpEeSTwIE92vzHqldamK7uNtWH2Y9shXyTMOS2KD7UrLw0GgX0W7t0pyungsIZlRYyDsB0wNFOrmlnGe1dpCDGcBJgLclWaOR-eLt_Ow8rxwwYtdK5HJXi_WKp630hPxe3st6rq1glYk"/>
+</div>
+<div class="absolute -bottom-8 -right-4 w-28 h-40 bg-surface rounded-xl shadow-2xl rotate-6 p-2 overflow-hidden border border-white/10">
+<img alt="Promo Card 3" class="w-full h-full object-cover rounded-lg" data-alt="Vibrant summer coffee drink poster with iced latte and bright citrus accents in high fashion editorial style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFN9hNAaREBw4DH3CajObvQHMlDZGPAkBkujdbW0c9eDVi0uIvCvlNkte9zCQwTlPGYNsWFAxA9nfNjvkEMrF1YatKvNA2_xxeQq5D6eXzeu1fwBUBw-8jtVrf37nJqy_bAhZ8mkluJXrpsBTKybnjra57OwdDIkgICHTy_EOZOhH-d-WCATV908x1vHP8TYmvYTWk-UR9boAk6dNyvaiOFN0wTvO363KmC1zzLbqpKxzASWvJ_8YGamGZtNKYXS9Ap9Vk3_hcFpI"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI-Powered Artisanal Precision Section -->
+<section class="bg-surface py-24 border-b border-surface-container-high">
+<div class="max-w-7xl mx-auto px-6">
+<div class="grid lg:grid-cols-2 gap-16 items-center">
+<div class="order-2 lg:order-1">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-4">
+<div class="rounded-2xl overflow-hidden shadow-lg border border-surface-variant bg-surface-container-lowest p-2">
+<img alt="Slow Drip aesthetic 1" class="w-full h-auto rounded-xl object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ugtvx4VtAXlkBQxS6hkzszNA28emb45UEZIhKKbh6JUy5IZ7e19-iN_Wn1JIy8p1yNXekcOYaY_IKpxh4wssVb1_PAJV04J1Ts0Av861p4yiXLJ6-rCiJyJkpApbDbjKHLesxdwPvpqvfXKTBNegNs9HMSNpDUNLmVPXrpIr3cjg3blv1PiZN1YJZtArLe0TgojzoGxq_zqnyeQx8IJhQV_JRtqoRzAWYCJ9PGjAUBq97ZuJXOvExMN-_i35nMXmj-3Ju-X4QJI9A"/>
+</div>
+<div class="bg-primary/5 rounded-2xl p-6 border border-primary-container/20">
+<p class="text-sm font-bold text-primary mb-2 uppercase tracking-widest">Texture AI</p>
+<p class="text-on-surface-variant text-sm leading-relaxed">Engineered to render the specific viscosity of condensed milk and dark roast blends.</p>
+</div>
+</div>
+<div class="space-y-4 pt-8">
+<div class="bg-primary-container/10 rounded-2xl p-6 border border-primary-container/20">
+<p class="text-sm font-bold text-primary mb-2 uppercase tracking-widest">Crema Focus</p>
+<p class="text-on-surface-variant text-sm leading-relaxed">Capturing the perfect golden-brown foam that defines a masterfully pulled shot.</p>
+</div>
+<div class="rounded-2xl overflow-hidden shadow-lg border border-surface-variant bg-surface-container-lowest p-2">
+<img alt="Slow Drip aesthetic 2" class="w-full h-auto rounded-xl object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ujV2ipcsRojuQGRlaIY4TDEIzypKIZKGRPfknRQqwfX2uAXMr2Anrhrg0U1cFZHaNhzLmU9Y4CUiFZ4Gu318ZXUh3NzYLK52B66RbfmEg6UzUvNsoTFEuXNSlar81sWVjNu5pXXzLloI8jZvgkVcGSxSwpJgcySTkRZhGPnElWww57JVBXF5yaiuBT8GdTQHBke_Ii9nmVn4-eOBmsBU3fdI2V0Svlr2FfFolroVGw9PiEkGSakQ2y26mFHik9yT-7PzNCyIZVN8Q"/>
+</div>
+</div>
+</div>
+</div>
+<div class="order-1 lg:order-2">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/20 text-primary font-bold text-xs uppercase tracking-widest mb-6">
+<span class="material-symbols-outlined text-sm">precision_manufacturing</span>
+Artisanal Precision
+</div>
+<h2 class="font-headline text-4xl lg:text-5xl font-extrabold text-on-surface leading-tight mb-8">
+                        Roasting Visuals with <br/>
+<span class="text-[#C8A27C]">AI Precision.</span>
+</h2>
+<p class="text-on-surface-variant text-lg lg:text-xl mb-8 leading-relaxed">
+                        Generic AI creates generic images. POSTNOW is different. We’ve trained our models specifically on the nuances of specialty coffee aesthetics.
+                    </p>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-[#C8A27C] flex-shrink-0 flex items-center justify-center text-white">
+<span class="material-symbols-outlined">coffee_maker</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface text-lg mb-1">Cambodian Coffee Culture</h4>
+<p class="text-on-surface-variant">Our AI understands local preferences, from the iconic Phum Coffee aesthetics to the perfect balance of "Tuk Dos Ko" textures.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-full bg-[#C8A27C] flex-shrink-0 flex items-center justify-center text-white">
+<span class="material-symbols-outlined">brush</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface text-lg mb-1">Micro-Detail Recognition</h4>
+<p class="text-on-surface-variant">Intelligent rendering of latte art symmetry, micro-foam bubbles, and the rich, dark gradients of artisanal slow drips.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How it works -->
+<section class="bg-lavender-gray py-24 overflow-hidden">
+<div class="max-w-6xl mx-auto px-6 text-center">
+<h2 class="font-headline text-4xl lg:text-5xl font-bold text-on-surface mb-16">
+                    From idea to post in 2 minutes.
+                </h2>
+<div class="relative flex justify-center items-center py-20 perspective-lg h-[400px]">
+<!-- 3D Perspective Arc of Cards -->
+<div class="absolute transform -translate-x-48 -rotate-y-12 translate-z-[-100px] opacity-40 hover:opacity-100 transition-opacity">
+<div class="w-48 h-64 bg-white rounded-2xl shadow-xl p-3">
+<img class="w-full h-full object-cover rounded-xl" data-alt="Minimalist aesthetic advertisement for cold brew coffee on clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5-y4_5joc2MHacYUAb2SSFWPzLqBsztbWY0GK6EEBkf0nn7Nc-QVtDzBtetit7rz9NaqAfIAchjmNWp94QaPyaLzTbp4sIdvcjoCVtIeZuTWAjIs9chVGgyZjFVb_5k3-zsI70zvg8-u-odJRUbGDtm5I73RDTKpr78D0wWWzZJPRzjGwZhq5d3orBq9ierdVi0X9hIzy2p3LQ952p_bqvem5-s3ezsd1YA-VmKKXT_xuePFWo2b2PCsxO5T-OM7Aqq7PYGbGnaw"/>
+</div>
+</div>
+<div class="absolute transform -translate-x-24 -rotate-y-12 translate-z-[-50px] opacity-70 hover:opacity-100 transition-opacity">
+<div class="w-52 h-72 bg-white rounded-2xl shadow-2xl p-3">
+<img class="w-full h-full object-cover rounded-xl" data-alt="Delicious close up of a croissant and latte combo in a cozy cafe setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjNfaFDP9I3283mfwbElLK9TZ0qJILtuh8woveTJfAw8LMPtORetYqYCQ7uQ5RyCB32K7tS4BDF8_QWT1FGjA501Jsk41XNIZXgKF8NsKqBlxhvaTfCw85sGzZImO7mEUi9iKVSXYJcJwmslKl4OthmW2Gkb7yW0WoJdfOeGjzzS7CQKPBgc6z3aTvcUQVU-33MAmrEMJQRikZo9rsS6RWL3Gcnp6jLziHILYztR9YEHuMIs2WpjpEWKtT-EQI4DQQrHDSM10mMxo"/>
+</div>
+</div>
+<div class="absolute z-20 transform scale-110 shadow-2xl">
+<div class="w-56 h-80 bg-white rounded-2xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] p-4">
+<div class="h-full border-4 border-primary-container/20 rounded-xl overflow-hidden relative">
+<img class="w-full h-full object-cover" data-alt="Premium seasonal coffee menu poster with gold leaf accents and elegant serif typography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoGigAGVI8LVgHnO5EsEcn_t-Fa3yP-MqAfwrxBGNPls6olFjP2lzlPRsp2SiMdwW4K-C3X3YQn9mmCtFCnpLtUrKJp5afGkznRLFChLrolyqJPTbdDNbdpXzXuy5ZVIrYctHMpabSyl6GXDBHbrjdEA_eUSgEewO_jkfVuviMKvQ9YHFKN0brKtyRO47oLhCWEAG8wPuLw3iaLkx8_vrPtQYZZgsRQTsmfXoYZd7RbPKIQLM0tgfIAJZeY6eYa6YifFVa9kr1ZoM"/>
+<div class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md p-3 rounded-lg text-left">
+<p class="text-[10px] font-bold text-primary uppercase tracking-widest">New Arrival</p>
+<p class="text-sm font-bold text-on-surface">Honey Lavender Latte</p>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute transform translate-x-24 rotate-y-12 translate-z-[-50px] opacity-70 hover:opacity-100 transition-opacity">
+<div class="w-52 h-72 bg-white rounded-2xl shadow-2xl p-3">
+<img class="w-full h-full object-cover rounded-xl" data-alt="Inspirational morning coffee quote poster with warm sunlight and soft blur" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADLyq3tJ649x_yy2HT45MVyMEEqDTBvjAPs_l4k4E5QctvW8XLP9hF1xlFdq9ZpGtDCfg9qUDnl21aMd2YV77QhjBZYa_Ih9eVwSOBAqPYqKLBjBTTToUdoz78rqtqL3W1_7TvJNURsXHlc4Z4VrKKzDh64cwwIK-QZu5z7-FnGSJTnYnsW8kHji1PGgIC3IHweI7Idok7HVAW7bfR9XPwYnoG6sZ_EsM95O6vTJ7jTGuoVHwUBI1CY-C_2AY0-EPq1MENc5DetUE"/>
+</div>
+</div>
+<div class="absolute transform translate-x-48 rotate-y-12 translate-z-[-100px] opacity-40 hover:opacity-100 transition-opacity">
+<div class="w-48 h-64 bg-white rounded-2xl shadow-xl p-3">
+<img class="w-full h-full object-cover rounded-xl" data-alt="Industrial style coffee shop event poster with bold black typography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5h36VX6DfycRU-VNpkqLGU68sYdJEr8TZTQJS2zG_l9uBBt5MpX5mLgKNRC673GAdHkShEgRF1nzm9-ddOBDppRgsmFOeaeHUOPnF2WdtN-jznl-sJZn79znQ1H4VIhUZ3W9SYvLCRCj7tNkML8ZkNy5NIgCFaUn1d-uhLRcAbUY8kM4aMn_Oi0DXYwBns6zITB1jwiDZ--tzqiJK_R1zhnkHUf-MxpC6sHUYKNpH0sQFZ4MH2yYzwOucAaK9tstza9enn7iYGmI"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Poster Gallery (Bento Grid) -->
+<section class="bg-[#FFF8F0] py-24">
+<div class="max-w-7xl mx-auto px-6">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+<div>
+<h2 class="font-headline text-4xl lg:text-5xl font-bold text-on-surface mb-4">See what POSTNOW creates.</h2>
+<p class="text-on-surface-variant text-lg">Diverse styles tailored for every cafe's soul.</p>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex -space-x-3 mb-3">
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-white object-cover" data-alt="Portrait of a smiling young woman barista in a brown apron" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYJLTSk8WvQU0Gqkbf8D2P1XXmrcXs_dPzxpEuy6BW-ygvufc3xiXUfKuAEvbjEyU5r3ryoLnmmlIewZEhv2bfZJECnXp6OBC_CZptxHV6TUnZ8B5oIGEVAf1u6X9HY__n3Cu-ZwBYexWUQoA65GsqECBfi3LSvbeokTYBe576iMvJfqVrlxvkQvFXvvjLR-DyZmX1yej0iPf8o2_zEgQrGaQPX6vsKtJJ_cgUpv2pXoPinJ4gyg_O_lTJVBfI-aC2hj5Oirny_Z0"/>
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-white object-cover" data-alt="Portrait of a friendly middle aged man cafe owner" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdT7OfIIBJOSWs27-FJdLM6Vv5ZGBdzf_OgygrfjqsznKeZwf7EfY5KQfudiPf6gNlCMkEPp27x0IOn8nqgIUqppk2hcmhouxlQ-AlSpvGfe3t7C8BkxmQSUx5ibdltgB5TMUszy44MHKdiuy19sqWm8RbhnQyX6sHXbF3H35RC-B6vZUKwGc0BXHBQLgy4iruXemCx2OnWjXQE-aPXTYssKbQg3IUd1kZ9yr0p31T09g6DFQ8ozQO-9r-ZWTadAYK2CmVc5hSlDo"/>
+<img alt="User" class="w-10 h-10 rounded-full border-2 border-white object-cover" data-alt="Portrait of a young creative professional woman entrepreneur" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEU84s6-oubo_1WkBWJEhLd13L7e7TwLmaturCAcyKMSVJwoLs_HE6MWZSaubzvi4gorsmltYWu9MgXBIGi9TNuWYw2g_sxRYcGQxqQ-OO3zERAqWFhRn7OhHM8VHQES7b4NOahOkadqNBof4TSiuQr3cXbzgNBwXalDPoo8FFrmEt1X6t-ECz0D76IZxvGpxCkX7RVg_TitZMssOEBCThkGc6zok8l9fo_aYzhtltk_liRYY3p9zCGOBre4nA6ZQDpNYByFdNKgU"/>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-primary-container flex items-center justify-center text-[10px] font-bold text-on-primary-container">500+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex text-[#C8A27C]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-sm font-medium text-on-surface">5-star rating from local shops</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<!-- Bento Item 1: Large Feature -->
+<div class="md:col-span-2 md:row-span-2 bg-surface-container rounded-3xl overflow-hidden group">
+<img alt="Cozy Style" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Large format cozy coffee shop poster featuring warm wooden textures, soft hygge atmosphere, and steaming cappuccino" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzcWO9wIYNp2aBEJYUG6q53o13Zz2dZJRVG8F681Sm3AbaxlC9Hui7zbrQnGNgGP1O2h1omM9eMCsfftMWEjqn3IHfeNeYmJDFSvgpCUDV6sSui0j_Ld1q5IqJJFKsSYwrhViyB_90yPWLFxxCbaHVjU34JxUA1s7MtPb_YTGs2TX-g4tvbCAPfRLh3eKTckl2v3avECbVCHv2uc8hSFpnisVURmyq7BoiA5Gn5afHSAoGFySMqr5BFeYkhisOjwuq2kStRGYAIeE"/>
+</div>
+<!-- Bento Item 2 -->
+<div class="bg-surface-container rounded-3xl overflow-hidden group h-64 md:h-auto">
+<img alt="Modern Style" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Bold modern minimalist coffee advertisement with high contrast black and white photography and red typography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeHS4bwn66sO2gOHlw-AN4085QYaxIRAR-e43khcu5HYZpRhRnOwIJxMxThenMWlYT3K_2kt0bnU7GsBoAXBt6XKe5XCnG7oEtYq2CjFmULZ9Qs7xHBBQ5NeY1YTEyFtMY5eM5Zbv6jVP3ECX-RcunisYgw1jusgcQN7dxRGAwXTnJKJ_sd3slU2kjidqR2vYx7qfAeuU-mGcNdXuS1ha4zRFvG5ZFdOCSFd8BexdwgHeJ8syoslFVsX7_vDFHcj47zsbddDkDh-I"/>
+</div>
+<!-- Bento Item 3 -->
+<div class="bg-surface-container rounded-3xl overflow-hidden group h-64 md:h-auto">
+<img alt="Clean Style" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Clean minimalist coffee shop poster with a flat lay of coffee beans and a ceramic cup on a sage green background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQRkpCAvqsSN0BC9CdB24JnvjZEVg4RJMlJEU6UkDMcYxt4PWSPJUQfhR5VvBSLhayxKkWEICZbodICHWow4gMYdWfybWsZQAIrP0qJXwilvP0L7xFlcOofGpFw2Di8pSCoSD-rY9Bh4RXrvvcurSErokGhaWhljLO-_sDyKqcszNYZ48npKLkYTBYe5iZ3vS19kTDnogWxl5fjiR2E-wGSifDWc8NVho0g2y5b_5p2fcGwlzhhnW1ZU0ovEsY4b6R_WjmqLgHqmw"/>
+</div>
+<!-- Bento Item 4 -->
+<div class="bg-surface-container rounded-3xl overflow-hidden group h-64 md:h-auto">
+<img alt="Artistic Style" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Artistic watercolor illustration of a coffee plant and cup for a boutique cafe social media post" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyUM_nyXTRkZT-Y7fSKjTzUlsTbeAvmsNTJ543vfOJ8tvQXDV-B3uJlbNSglYYrpQDY46B27BDP_nnLN7PzwnwiO08w0yCAHy5qvfT03xRRXo60tORQvgLDAfWNmRcJqeyd1hqLt3qeshsHAt8cJqbSPCsprLMOg1oY8Af9KIHpp2y-zMmqclD8KQR0kbnFNrVdyh29ilA_TahhR9nOXgMnquL2pVn7i7lqzDJaPWVuNPw3xNO-016EQhdKuTqXPkqehqAM32CV0U"/>
+</div>
+<!-- Bento Item 5 -->
+<div class="bg-surface-container rounded-3xl overflow-hidden group h-64 md:h-auto">
+<img alt="Vibrant Style" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Geometric abstract coffee poster with vibrant terracotta and cream colors and stylized espresso machine" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmF_e-7T_2yNb7pqZX4i9Z0UfQA6NALZ9Ll3YAcQNIOuIdgS0RBzwIh_-1VJgbTt-YklweVml7IJnqcuumPtBYeiIiqVKmBN0r_N7jZBNnVkdccPnGZT-NNp4aixcWjJIeRxKNsyaBHwiR4gf3tNTrY4MSfKxGpbL_T9wJoytY9TCz9RmPlaNDNZkQORCIPbnAdSxXAb46HjzMpN4Gw4kCGh6Oo-V-SyMOpejQfr0V1W1ur-WZHYLkPsrQd6JElIMU_rVKq6Z9B1o"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Comparison Table -->
+<section class="bg-surface-container-lowest py-24">
+<div class="max-w-5xl mx-auto px-6">
+<div class="text-center mb-16">
+<h2 class="font-headline text-4xl font-bold text-on-surface mb-4">Built for Cambodia. Built for you.</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Localized designs that resonate with your customers, powered by the world's most advanced AI.</p>
+</div>
+<div class="overflow-hidden rounded-3xl shadow-xl bg-surface border border-surface-container-high">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-left">
+<th class="p-6 font-bold text-on-surface">Feature</th>
+<th class="p-6 font-bold text-on-surface bg-primary/5 border-x-4 border-primary-container text-center">POSTNOW</th>
+<th class="p-6 font-bold text-on-surface-variant text-center">Canva AI</th>
+<th class="p-6 font-bold text-on-surface-variant text-center">AdCreative</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-6 text-on-surface font-medium">Coffee-Specific Models</td>
+<td class="p-6 text-center bg-primary/5 border-x-4 border-primary-container">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</td>
+<td class="p-6 text-center text-stone-300">
+<span class="material-symbols-outlined">cancel</span>
+</td>
+<td class="p-6 text-center text-stone-300">
+<span class="material-symbols-outlined">cancel</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-6 text-on-surface font-medium">Local Khmer Support</td>
+<td class="p-6 text-center bg-primary/5 border-x-4 border-primary-container">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</td>
+<td class="p-6 text-center text-stone-300">
+<span class="material-symbols-outlined">cancel</span>
+</td>
+<td class="p-6 text-center text-stone-300">
+<span class="material-symbols-outlined">cancel</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-6 text-on-surface font-medium">Auto-Caption Generation</td>
+<td class="p-6 text-center bg-primary/5 border-x-4 border-primary-container">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</td>
+<td class="p-6 text-center">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</td>
+<td class="p-6 text-center">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-6 text-on-surface font-medium">Cost per Post</td>
+<td class="p-6 text-center bg-primary/5 border-x-4 border-primary-container font-bold text-primary">$0.05</td>
+<td class="p-6 text-center text-on-surface-variant">$0.50</td>
+<td class="p-6 text-center text-on-surface-variant">$2.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="bg-cocoa-brown py-24 relative overflow-hidden">
+<!-- Subtle Texture Overlay -->
+<div class="absolute inset-0 opacity-5" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDkg97kfnSK5qjgblEU6PwAfpAV1wG4Gyo3UqFtFt_MpEjLrkJ68t4EkVBztW9NUwL2y2hkSxx231pq8opZjO9MknEkcofSsTBoDHaHdzfIT7736zBW4koFnf7Msh4h05_SbkO8frOol_AKPNDKwsVyfEWnqqyaBk1QQaXffm282NyhxMrznAFamMuMDyaLB6VK6nbkbIDLwIM9IX4tLKi7gkJOGjEvmz5h2iv4fRl_3BoEpofBfnwtE2oihHQEG2yXaqLpHcLphFw');"></div>
+<div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+<h2 class="font-headline text-4xl lg:text-6xl font-extrabold text-white mb-8 leading-tight">
+                    Your next post is 2 minutes away.
+                </h2>
+<p class="text-secondary-fixed-dim text-xl mb-12 opacity-80">
+                    Stop overthinking your marketing. Start brewing better results today.
+                </p>
+<button class="bg-[#C8A27C] text-on-secondary-fixed px-12 py-5 rounded-full font-bold text-xl shadow-2xl hover:bg-[#D9B38D] hover:scale-105 active:scale-95 transition-all flex items-center gap-3 mx-auto">
+                    Start for free
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#fff8f1] border-t border-stone-200/10 py-12">
+<div class="w-full flex flex-col md:flex-row justify-between items-center px-8 gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">coffee</span>
+<span class="text-lg font-black text-[#775838]">POSTNOW</span>
+</div>
+<div class="text-[#775838] font-['Manrope'] text-xs uppercase tracking-widest text-center md:text-left">
+                © 2024 POSTNOW Artisanal Marketing
+            </div>
+<div class="flex gap-8">
+<a class="text-stone-400 font-['Manrope'] text-xs uppercase tracking-widest hover:text-[#C8A27C] transition-colors" href="#">Privacy</a>
+<a class="text-stone-400 font-['Manrope'] text-xs uppercase tracking-widest hover:text-[#C8A27C] transition-colors" href="#">Terms</a>
+<a class="text-stone-400 font-['Manrope'] text-xs uppercase tracking-widest hover:text-[#C8A27C] transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</body></html>

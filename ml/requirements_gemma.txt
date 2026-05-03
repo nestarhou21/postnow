@@ -1,0 +1,22 @@
+# ml/requirements_gemma.txt
+# Fine-tuning Gemma 4 with QLoRA for POSTNOW
+#
+# Install:
+#   pip install -r ml/requirements_gemma.txt
+#
+# On Google Colab (recommended):
+#   !pip install -q -r ml/requirements_gemma.txt
+#
+# Note: torch is pre-installed on Colab. For local install with CUDA:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu121
+
+transformers>=4.44.0
+datasets>=2.20.0
+peft>=0.12.0
+trl>=0.10.0
+bitsandbytes>=0.43.0        # 4-bit QLoRA quantisation (GPU only)
+accelerate>=0.33.0
+sentencepiece>=0.2.0
+sacrebleu>=2.4.0            # evaluate.py
+tqdm>=4.66.0
+anthropic>=0.34.0           # generate_data.py (Claude API fallback)
