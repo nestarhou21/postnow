@@ -521,14 +521,6 @@ def generate_poster(
         reference_image_base64, reference_image_mime,
     )
 
-    # Step 4 — Pillow: burn text onto image
-    brand_color = colors[0] if colors else "#C8A27C"
-    try:
-        image_bytes = overlay_promo_text(image_bytes, promotion_prompt, shop_name, brand_color)
-        mime = "image/png"
-    except Exception as e:
-        print(f"[image_agent] Text overlay failed: {e} — returning raw image.")
-
     b64 = base64.b64encode(image_bytes).decode()
     return {
         "image_base64":   b64,
