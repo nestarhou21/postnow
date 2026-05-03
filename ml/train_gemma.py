@@ -289,7 +289,7 @@ def train(args):
         bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
         fp16=torch.cuda.is_available() and not torch.cuda.is_bf16_supported(),
 
-        max_seq_length=args.max_seq_len,
+        max_length=args.max_seq_len,
         dataset_text_field="text",
         packing=False,             # set True to pack short sequences (faster, needs more RAM)
 

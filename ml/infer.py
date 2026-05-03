@@ -28,7 +28,7 @@ import argparse
 from pathlib import Path
 
 import torch
-from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
+from transformers import MBartForConditionalGeneration, MBart50Tokenizer
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Constants (must match train.py)
@@ -63,12 +63,13 @@ class CaptionModel:
     """
 
     def __init__(self, model_path: str | Path, device: str | None = None):
-        model_path = Path(model_path)
-        if not model_path.exists():
+        model_path = Path(model_path) if "/" not in str(model_path) or str(model_path).startswith("/") else model_path
+        if isinstance(model_path, Path) and not model_path.exists():
             raise FileNotFoundError(
                 f"Model directory not found: {model_path}\n"
                 "Run ml/train.py first, or set USE_LOCAL_MODEL=false to use Claude fallback."
             )
+        model_path = str(model_path)
 
         if device is None:
             if torch.cuda.is_available():
@@ -81,8 +82,9 @@ class CaptionModel:
         self.device = device
         print(f"[infer] Loading model from {model_path} on {device} ...")
 
-        self.tokenizer = MBart50TokenizerFast.from_pretrained(
-            str(model_path),
+        # Load tokenizer from base model — fine-tuning doesn't change the vocabulary
+        self.tokenizer = MBart50Tokenizer.from_pretrained(
+            "facebook/mbart-large-50",
             src_lang=SRC_LANG,
             tgt_lang=TGT_LANG,
         )
