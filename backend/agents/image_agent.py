@@ -1,11 +1,13 @@
 """
 agents/image_agent.py — Gemini promotional poster generator
 
-Flow:
-  1. Claude meta-prompt  → picks best visual style + describes the drink
-  2. Style function      → builds a detailed Gemini image prompt (no text in image)
-  3. Gemini API          → generates clean product photo
-  4. Pillow              → burns promo text + shop name onto the final image
+4-step pipeline:
+  1. Claude Analyzer   → examines the reference photo (if any) + promo text,
+                         picks the best visual style, writes a detailed drink description.
+  2. Claude Engineer   → reads the style guide + drink description, then writes a
+                         fully custom, hyper-specific Gemini image prompt from scratch.
+  3. Gemini            → generates a clean product photo (zero text in image).
+  4. Pillow            → burns shop name + promo text onto the final image.
 """
 import os
 import base64
@@ -41,418 +43,344 @@ _MOCK_SVG = (
 _MOCK_B64 = base64.b64encode(_MOCK_SVG.encode()).decode()
 
 
-# ── 8 Specialized style templates ─────────────────────────────────────────────
+# ── Style guides (passed to the Engineer as composition rules) ─────────────────
 
-def sky_float(drink_description: str) -> str:
-    return textwrap.dedent(f"""
-        [SUBJECT]: {drink_description}
-        The drink is the absolute hero, centered and dominant,
-        filling 50% of the frame. Placed resting on top of
-        a large oversized coffee bean as its pedestal.
-        Passes the 3-second zoom-out test — identifiable
-        even at thumbnail size.
+STYLE_GUIDES = {
+    "sky_float": textwrap.dedent("""
+        COMPOSITION: The drink is the absolute hero, centered, filling 50% of the frame,
+        resting on an oversized coffee bean as its pedestal. Identifiable at thumbnail size.
+        CAMERA: Eye-level, slight low angle looking up. 50mm feel, drink razor sharp.
+        LIGHTING: Bright cheerful daylight, single light source from upper left.
+        Condensation glistens, ice catches light naturally. All shadows obey one direction.
+        SCENE: Bright blue sky with white fluffy clouds as background.
+        Scattered coffee beans and green leaves floating weightlessly around the drink.
+        No surface — drink floats in open sky on its coffee bean pedestal.
+        MOOD: Vibrant, energetic, celebratory Southeast Asian café marketing.
+        Sky blue, cream and warm brown palette. Fun, fresh, commercial.
+    """).strip(),
 
-        [CAMERA]: Eye-level shot, slight low angle looking
-        up at the drink to convey energy and excitement.
-        50mm feel, drink sharp and in crisp focus.
-        Natural bokeh background.
+    "dark_moody": textwrap.dedent("""
+        COMPOSITION: The drink is the only well-lit element, filling 50% of the frame.
+        Placed on a dark wooden coaster on a dark wooden surface.
+        CAMERA: Eye-level, slight dutch angle for drama. 85mm portrait feel, drink razor sharp.
+        Background falls into soft darkness.
+        LIGHTING: Single warm dramatic light from upper left. Strong deep shadows everywhere.
+        Only the drink catches the light. Rim light on the cup edge. One light source only.
+        SCENE: Very dark warm brown background, almost black. Soft blurred ethnic textile
+        in far corner. Artisan props nearby — wooden spoon, ceramic bowl with coffee powder,
+        folded linen cloth. Everything handcrafted and intentional.
+        MOOD: Premium, intimate, slow coffee culture. Deep brown, mocha, dark chocolate palette.
+        Zero cold colors. High-end café luxury.
+    """).strip(),
 
-        [LIGHTING]: Bright cheerful daylight. Single light
-        source from upper left. All shadows, highlights and
-        reflections obey this one direction only.
-        Real-world light — condensation on cup glistens,
-        ice catches the light naturally.
+    "clean_minimal": textwrap.dedent("""
+        COMPOSITION: Drink perfectly centered, filling 40% of the frame maximum.
+        Generous empty space on all sides. The emptiness IS the design.
+        CAMERA: Eye-level, perfectly straight on, no tilt. 50mm feel. Drink perfectly sharp.
+        LIGHTING: Soft even studio light from slightly above. Clean soft shadow to one side.
+        No drama, no harsh shadows. One light source only.
+        SCENE: Pure off-white or very light warm beige background, completely uncluttered.
+        Light grey or white smooth surface underneath. At most one single minimal prop —
+        one coffee bean or one clean straw. Zero clutter.
+        MOOD: Elegant, modern, confident, simple. Premium brand lookbook aesthetic.
+        Off-white, cream, soft beige — drink's own color is the only accent.
+    """).strip(),
 
-        [SCENE]: Bright blue sky with white fluffy clouds
-        as the background, clean and airy. Scattered coffee
-        beans and green leaves floating in air at various
-        angles around the drink — some in foreground,
-        some behind. Everything feels suspended and
-        weightless. No surface — drink floats on its
-        coffee bean pedestal in open sky.
-
-        [STYLE]: Vibrant, energetic, commercial Southeast
-        Asian café marketing. Sky blue, cream and warm
-        brown color palette. Fun, fresh, celebratory mood.
-        Real-world textures throughout — every surface,
-        every prop feels physically present and tangible.
-
-        [TECHNICAL]: Photorealistic, ultra high quality, 4K.
-        Square 1:1 format.
-        --no text, no words, no letters, no watermarks,
-        no floating overlays, no UI elements, no digital effects.
-    """).strip()
-
-
-def dark_moody(drink_description: str) -> str:
-    return textwrap.dedent(f"""
-        [SUBJECT]: {drink_description}
-        The drink is the absolute hero and the only
-        well-lit element in the entire scene, filling
-        50% of the frame. Placed on a dark wooden coaster
-        on a dark wooden surface. Every detail of the drink
-        is crisp and sharp — condensation, layers, texture.
-
-        [CAMERA]: Eye-level shot, slight dutch angle for
-        drama and intimacy. 85mm portrait feel, drink
-        razor sharp. Background falls into soft darkness.
-        Composition passes the 3-second zoom-out test.
-
-        [LIGHTING]: Single warm dramatic light from upper
-        left. Strong deep shadows everywhere. Only the
-        drink catches the light — everything else fades
-        into darkness. Rim light catches the very edge
-        of the cup. All shadows obey one single direction.
-
-        [SCENE]: Very dark warm brown background, almost
-        black. Soft blurred ethnic textile visible in far
-        corner. Dark wooden surface. Artisan props placed
-        naturally nearby — wooden spoon, small ceramic bowl
-        with coffee powder, folded linen cloth underneath.
-
-        [STYLE]: Premium, intimate, slow coffee culture.
-        Deep brown, mocha, dark chocolate color palette.
-        Zero cold colors anywhere. High-end café luxury.
-
-        [TECHNICAL]: Photorealistic, ultra high quality, 4K.
-        Square 1:1 format.
-        --no text, no words, no letters, no watermarks,
-        no floating overlays, no UI elements, no digital effects.
-    """).strip()
-
-
-def clean_minimal(drink_description: str) -> str:
-    return textwrap.dedent(f"""
-        [SUBJECT]: {drink_description}
-        The drink is the absolute hero, perfectly centered
-        with generous empty space around it. Filling 40%
-        of the frame maximum. Clean and confident.
-
-        [CAMERA]: Eye-level shot, perfectly straight on,
-        no tilt whatsoever. 50mm feel. Drink perfectly
-        sharp. Lots of negative space above and below.
-        The emptiness IS the design.
-
-        [LIGHTING]: Soft even studio light from slightly
-        above. Clean soft shadow cast naturally to one
-        side on the surface below. No drama, no harsh
-        shadows. One light source only.
-
-        [SCENE]: Pure off-white or very light warm beige
-        background, completely clean and uncluttered.
-        Light grey or white smooth surface underneath.
-        Zero clutter. At most one single minimal prop —
-        one coffee bean or one clean straw. Nothing more.
-
-        [STYLE]: Elegant, modern, confident, simple.
-        Off-white, cream, soft beige palette. Premium
-        brand lookbook or high-end product photography.
-
-        [TECHNICAL]: Photorealistic, ultra high quality, 4K.
-        Square 1:1 format.
-        --no text, no words, no letters, no watermarks,
-        no floating overlays, no UI elements, no digital effects.
-    """).strip()
-
-
-def flat_lay(drink_description: str) -> str:
-    return textwrap.dedent(f"""
-        [SUBJECT]: {drink_description}
-        The drink is the absolute hero viewed from directly
-        above. Placed slightly off-center in the composition.
-        All details visible from overhead — top of the drink,
-        lid, straw, toppings all clearly identifiable.
-
-        [CAMERA]: Directly overhead, perfectly top-down
-        flat lay. Camera pointing straight down at 90 degrees.
-
-        [LIGHTING]: Bright soft even daylight from above.
-        No harsh shadows. One consistent light source.
+    "flat_lay": textwrap.dedent("""
+        COMPOSITION: Drink viewed from directly overhead, placed slightly off-center.
+        All top details clearly visible — lid, straw, toppings identifiable from above.
+        CAMERA: Perfectly top-down at 90 degrees. Wide enough to show the full styled scene.
+        LIGHTING: Bright soft even daylight from above. No harsh shadows.
         Soft gentle shadows directly under each object only.
+        SCENE: Warm peach or soft yellow pastel surface. Props neatly arranged around
+        the drink — wooden tray, small ceramic bowl of toppings, wooden spoon, scattered
+        coffee beans, small fresh green leaves. A hand reaching in from the frame edge
+        adds life and human connection.
+        MOOD: Instagram-able, fresh, curated café lifestyle. Warm peach, yellow, cream, brown.
+    """).strip(),
 
-        [SCENE]: Warm peach or soft yellow pastel surface.
-        Props neatly arranged around the drink — wooden tray,
-        small ceramic bowl of toppings, wooden spoon,
-        scattered coffee beans, small fresh green leaves.
-        A hand reaching in from the frame edge adds life.
+    "outdoor_lifestyle": textwrap.dedent("""
+        COMPOSITION: Drink sitting naturally in outdoor setting, filling 45% of the frame.
+        Sharp and detailed against a beautifully blurred natural background.
+        CAMERA: Eye-level from slight 45-degree angle. Natural handheld feel, 50mm.
+        Drink sharp, outdoor background in beautiful soft bokeh.
+        LIGHTING: Warm natural golden sunlight from the side. Perfect sunny afternoon glow.
+        Gentle lens flare from the light source. All shadows follow the sun direction.
+        Condensation catches golden sunlight and glistens.
+        SCENE: Lush green grass field or garden in soft focus behind the drink.
+        Drink on a woven rattan tray on a soft picnic blanket.
+        Fresh fruits or wildflowers arranged naturally on the tray.
+        MOOD: Relaxed, lifestyle, warm, outdoor freedom. Fresh green, sky blue, warm cream.
+    """).strip(),
 
-        [STYLE]: Instagram-able, fresh, curated café lifestyle.
-        Warm peach, soft yellow, cream, brown palette.
+    "close_up_macro": textwrap.dedent("""
+        COMPOSITION: Extreme close-up — drink fills almost the entire frame.
+        Every detail visible: condensation droplets, individual ice cubes, liquid layers,
+        foam texture on top. The detail IS the story.
+        CAMERA: Extreme close-up, 45 degrees from slightly above. Macro feel.
+        Very shallow depth of field — only the drink sharp, everything beyond smooth bokeh.
+        LIGHTING: Soft dramatic side lighting catches every water droplet and surface texture.
+        Makes condensation glisten and sparkle like jewels. Single light source plus rim light.
+        SCENE: Completely blurred smooth cream or off-white bokeh background.
+        Nothing recognizable behind the drink. Zero props, zero distractions.
+        MOOD: Satisfying, premium, deeply sensory. High-end food and beverage magazine cover.
+    """).strip(),
 
-        [TECHNICAL]: Photorealistic, ultra high quality, 4K.
-        Square 1:1 format.
-        --no text, no words, no letters, no watermarks,
-        no floating overlays, no UI elements, no digital effects.
-    """).strip()
-
-
-def outdoor_lifestyle(drink_description: str) -> str:
-    return textwrap.dedent(f"""
-        [SUBJECT]: {drink_description}
-        The drink is the absolute hero, sitting naturally
-        in an outdoor lifestyle setting. Filling 45% of
-        the frame. Sharp and detailed against the beautifully
-        blurred natural background behind it.
-
-        [CAMERA]: Eye-level shot from slight 45 degree angle.
-        Natural handheld feel, 50mm. Drink sharp. Lush
-        outdoor background in beautiful soft bokeh.
-
-        [LIGHTING]: Warm natural golden sunlight from the
-        side. Soft and glowing, feels like a perfect sunny
-        afternoon. Gentle lens flare from the light source.
-
-        [SCENE]: Outdoor natural setting. Lush green grass
-        or garden in soft focus background. Drink sitting
-        on a woven rattan tray on a soft picnic blanket.
-        Fresh fruits or wildflowers arranged naturally nearby.
-        Feels like a perfect sunny picnic afternoon.
-
-        [STYLE]: Relaxed, lifestyle, warm, outdoor freedom.
-        Fresh green, sky blue, warm cream, natural organic tones.
-
-        [TECHNICAL]: Photorealistic, ultra high quality, 4K.
-        Square 1:1 format.
-        --no text, no words, no letters, no watermarks,
-        no floating overlays, no UI elements, no digital effects.
-    """).strip()
-
-
-def close_up_macro(drink_description: str) -> str:
-    return textwrap.dedent(f"""
-        [SUBJECT]: {drink_description}
-        The drink fills almost the entire frame — extreme
-        close-up hero shot. Every detail is visible and
-        razor sharp — condensation water droplets, individual
-        ice cubes, liquid color layers, foam texture on top.
-
-        [CAMERA]: Extreme close-up, 45 degree angle from
-        slightly above. Macro feel. Very shallow depth of
-        field — only the drink is sharp, everything beyond
-        is smooth creamy bokeh.
-
-        [LIGHTING]: Soft dramatic side lighting that catches
-        every water droplet and surface texture. Makes
-        condensation glisten and sparkle like jewels.
-        Single light source, rim light on opposite edge.
-
-        [SCENE]: Completely blurred smooth cream or off-white
-        bokeh background. Nothing recognizable behind the
-        drink. Zero props, zero distractions.
-
-        [STYLE]: Satisfying, premium, quality-focused, deeply
-        sensory. Feels like a cover shot from a high-end
-        food and beverage magazine.
-
-        [TECHNICAL]: Photorealistic, ultra high quality, 4K.
-        Square 1:1 format.
-        --no text, no words, no letters, no watermarks,
-        no floating overlays, no UI elements, no digital effects.
-    """).strip()
-
-
-def rustic_vintage(drink_description: str) -> str:
-    return textwrap.dedent(f"""
-        [SUBJECT]: {drink_description}
-        The drink is the absolute hero sitting within a
-        rich artisan scene, filling 40% of the frame.
-        Placed on a wooden serving board on a rustic
-        linen surface.
-
-        [CAMERA]: Slight high angle, 45 degrees looking
-        down at the full scene. 50mm feel. Drink sharp,
-        surrounding scene in soft warm focus.
-
-        [LIGHTING]: Warm golden natural light from one side,
-        like late afternoon sun streaming through a window.
-        Long warm amber shadows across the table surface.
-        Everything glows with warmth. Single light source.
-
-        [SCENE]: Rustic warm table scene. Wooden surface
-        with linen cloth underneath. Terracotta background
-        wall. Props arranged naturally — vintage copper
-        gooseneck kettle, ceramic mug on saucer, open book,
+    "rustic_vintage": textwrap.dedent("""
+        COMPOSITION: Drink sitting within a rich artisan scene, filling 40% of the frame.
+        Placed on a wooden serving board on a rustic linen surface.
+        CAMERA: Slight high angle, 45 degrees looking down at the full scene.
+        50mm feel. Drink sharp, surrounding scene in soft warm focus.
+        LIGHTING: Warm golden natural light from one side, like late afternoon sun
+        through a window. Long warm amber shadows across the table. Single light source.
+        Wood grain, linen weave, ceramic glaze all catch the warm light naturally.
+        SCENE: Rustic warm table scene. Terracotta background wall. Props arranged naturally —
+        vintage copper gooseneck kettle, ceramic mug on saucer, open book,
         scattered coffee beans, dried pampas grass in background.
-
-        [STYLE]: Artisan, handcrafted, heritage storytelling.
-        Warm brown, terracotta, caramel, copper, cream.
+        MOOD: Artisan, handcrafted, heritage. Warm brown, terracotta, caramel, copper, cream.
         Specialty single-origin coffee roaster editorial.
+    """).strip(),
 
-        [TECHNICAL]: Photorealistic, ultra high quality, 4K.
-        Square 1:1 format.
-        --no text, no words, no letters, no watermarks,
-        no floating overlays, no UI elements, no digital effects.
-    """).strip()
-
-
-def neon_night(drink_description: str) -> str:
-    return textwrap.dedent(f"""
-        [SUBJECT]: {drink_description}
-        The drink is the absolute hero, the only element
-        fully illuminated. Filling 50% of the frame.
-        Sitting on a dark dramatic surface, glowing
-        powerfully under a single spotlight.
-
-        [CAMERA]: Low angle looking slightly up at the drink.
-        Conveys power, premium energy and drama. 85mm feel.
-        Drink perfectly sharp, dark background falls away.
-
-        [LIGHTING]: Single strong warm golden spotlight
-        from directly above hitting only the drink.
-        Everything else in deep shadow. Rim lighting
-        catches the very edges of the cup with golden glow.
-        Scattered crystals on surface sparkle in the spotlight.
-
-        [SCENE]: Dark dramatic setting. Very dark background —
-        deep black with barely visible dark tropical foliage.
+    "neon_night": textwrap.dedent("""
+        COMPOSITION: Drink is the only fully illuminated element, filling 50% of the frame.
+        Sitting on a dark dramatic surface, glowing powerfully under a single spotlight.
+        CAMERA: Low angle looking slightly up at the drink. Conveys power and drama.
+        85mm feel. Drink perfectly sharp, dark background falls away.
+        LIGHTING: Single strong warm golden spotlight from directly above, hitting only the drink.
+        Everything else in deep shadow. Rim lighting catches cup edges with golden glow.
+        Scattered crystals on surface sparkle brilliantly in the spotlight.
+        SCENE: Very dark background — deep black with barely visible dark tropical foliage.
         Dark textured stone or slate surface under the drink.
-        Scattered sugar crystals or crushed ice around the
-        base catch the spotlight and sparkle brilliantly.
-
-        [STYLE]: Bold, dramatic, nightlife, urban, trendy.
-        Deep dark green, black, rich gold, warm amber.
-        High energy night café atmosphere.
-
-        [TECHNICAL]: Photorealistic, ultra high quality, 4K.
-        Square 1:1 format.
-        --no text, no words, no letters, no watermarks,
-        no floating overlays, no UI elements, no digital effects.
-    """).strip()
-
-
-STYLE_FUNCTIONS = {
-    "sky_float":        sky_float,
-    "dark_moody":       dark_moody,
-    "clean_minimal":    clean_minimal,
-    "flat_lay":         flat_lay,
-    "outdoor_lifestyle": outdoor_lifestyle,
-    "close_up_macro":   close_up_macro,
-    "rustic_vintage":   rustic_vintage,
-    "neon_night":       neon_night,
+        Scattered sugar crystals or crushed ice around the base sparkle like jewels.
+        MOOD: Bold, dramatic, nightlife, urban, trendy. Deep dark green, black, rich gold, warm amber.
+        High energy late-night café atmosphere.
+    """).strip(),
 }
 
-# ── Meta prompt ───────────────────────────────────────────────────────────────
 
-META_PROMPT = """
-You are an expert coffee shop creative director and
-poster designer specialized in Southeast Asian café
-marketing. You have 10 years of experience designing
-viral coffee shop promotional posters for cafés across
-Cambodia, Vietnam, and Thailand. You understand what
-makes a coffee poster sell — composition, light, mood,
-and the culture of the market.
+# ── Claude system prompts ──────────────────────────────────────────────────────
 
-Your job is to do two things:
+ANALYZER_SYSTEM = """
+You are an expert coffee shop creative director based in Southeast Asia.
+Your job is to analyze a promotional context and make two decisions.
 
-1. DESCRIBE THE DRINK: If an image is provided, look
-at it carefully and write a detailed vivid description
-of the drink exactly as it looks. Include: cup type
-and material, drink color and layers, toppings, ice,
-foam, condensation, garnish, and any other visible
-details. Be specific — this description will be used
-to recreate the drink visually so every detail matters.
-If no image is provided, write a beautiful generic
-coffee drink description based on keywords found in
-the promo text.
+If a drink photo is provided, examine it carefully and describe the drink in extreme detail:
+exact cup type (plastic/ceramic/glass), cup size, lid type, straw color and style,
+drink color (be specific — "dusty purple" not just "purple"), visible layers and their colors,
+toppings (pearls, jelly, foam, cream, powder), ice visibility, condensation level,
+any branding or logo printed on the cup, garnish. Every detail matters for photographic reproduction.
 
-2. PICK THE STYLE: Read the promo text carefully and
-as an experienced coffee poster designer pick the most
-suitable visual style from these 8 options:
-- sky_float: discount, promotion, off, sale,
-  grand opening, celebrate, energetic
-- dark_moody: premium, special, exclusive, luxury,
-  high-end, craft
-- clean_minimal: new arrival, new menu, launching,
-  introducing, fresh, simple
-- flat_lay: overhead, layout, collection, menu,
-  variety, selection
-- outdoor_lifestyle: weekend, chill, relax, cozy,
-  picnic, afternoon, nature
-- close_up_macro: detail, texture, quality, close,
-  craftsmanship, ingredients
-- rustic_vintage: artisan, handcrafted, brewing,
-  single origin, pour over, heritage
-- neon_night: late night, after dark, night,
-  midnight, party, urban, trendy
+If no photo is provided, write a beautiful vivid coffee drink description based on
+keywords in the promo text. Make it specific and photogenic.
 
-Always return your response in this exact JSON format:
-{"drink_description": "your detailed drink description here", "style": "the chosen style name here", "reason": "one sentence why you chose this style"}
+Then pick the best visual style from these 8 options based on the promo text keywords:
+- sky_float: discount, off, sale, grand opening, celebrate, promo, free, buy one
+- dark_moody: premium, special, exclusive, luxury, high-end, craft, signature
+- clean_minimal: new arrival, new menu, launching, introducing, now available
+- flat_lay: collection, variety, selection, menu, all drinks, combo
+- outdoor_lifestyle: weekend, chill, relax, cozy, picnic, afternoon, sunny
+- close_up_macro: detail, texture, quality, craftsmanship, fresh, ingredients
+- rustic_vintage: artisan, handcrafted, brewing, single origin, pour over, heritage
+- neon_night: late night, after dark, night, midnight, party, urban, nightlife
 
-Never return anything outside of this JSON.
-Never add markdown, never add backticks.
-Just clean raw JSON only.
+Respond in this exact JSON format only — no markdown, no backticks, raw JSON:
+{"drink_description": "...", "style": "...", "reason": "..."}
+""".strip()
+
+ENGINEER_SYSTEM = """
+You are a world-class commercial photography director who writes image generation prompts
+for Southeast Asian café advertising. Your prompts produce photorealistic, commercially
+polished results that look like professional paid campaigns.
+
+You will receive:
+- STYLE GUIDE: Exact composition, camera, lighting and scene rules to follow
+- DRINK DESCRIPTION: The specific drink that must appear — follow every detail precisely
+- SHOP NAME and PROMOTION CONTEXT
+
+Your task: Write ONE complete, optimized, highly specific image generation prompt.
+
+Critical rules:
+1. Follow the STYLE GUIDE's composition, camera, lighting, and scene rules exactly.
+2. Replace every generic drink reference with the exact DRINK DESCRIPTION details.
+   The cup's material, color, lid, straw, layers, toppings must all be described explicitly.
+3. If a reference photo is attached, the drink in the generated image must match it exactly —
+   same cup shape, same colors, same branding, same visual identity.
+4. The scene must feel physically real — every surface, liquid, ice cube, droplet
+   responds to light naturally. No CGI look, no digital art feel.
+5. The image must contain ABSOLUTELY ZERO text, words, letters, numbers, watermarks,
+   overlays, UI elements, or digital effects of any kind.
+6. End the prompt with: --no text, no words, no letters, no watermarks, no overlays
+
+Write in vivid present-tense descriptive language. Be specific. Be cinematic.
+Output ONLY the raw prompt text. No explanation, no labels, no JSON. Just the prompt.
 """.strip()
 
 
-# ── Step 1: Analyze promo → pick style + describe drink ──────────────────────
+# ── Claude API helper ──────────────────────────────────────────────────────────
 
-def _analyze_promo(
-    promotion_prompt: str,
-    reference_image_base64: str | None = None,
-    reference_image_mime: str = "image/jpeg",
-) -> dict:
-    """
-    Call Claude to pick the best visual style and describe the drink.
-    Falls back to sky_float if Claude is unavailable.
-    """
+def _call_claude(
+    system: str,
+    user_text: str,
+    image_b64: str | None = None,
+    image_mime: str = "image/jpeg",
+    max_tokens: int = 1024,
+) -> str:
     api_key = os.getenv("ANTHROPIC_API_KEY")
     if not api_key:
-        return {
-            "drink_description": (
-                f"A beautifully presented iced coffee drink in a clear plastic cup "
-                f"with a dome lid and black straw. Related to: {promotion_prompt}"
-            ),
-            "style": "sky_float",
-            "reason": "Default style — no Claude API key configured.",
-        }
+        raise RuntimeError("ANTHROPIC_API_KEY not set")
 
-    content = []
-    if reference_image_base64:
+    content: list = []
+    if image_b64:
         content.append({
             "type": "image",
-            "source": {
-                "type": "base64",
-                "media_type": reference_image_mime,
-                "data": reference_image_base64,
-            },
+            "source": {"type": "base64", "media_type": image_mime, "data": image_b64},
         })
-    content.append({"type": "text", "text": f"Promo text: {promotion_prompt}"})
+    content.append({"type": "text", "text": user_text})
 
-    payload = {
-        "model": "claude-sonnet-4-6",
-        "max_tokens": 512,
-        "system": META_PROMPT,
-        "messages": [{"role": "user", "content": content}],
-    }
+    with httpx.Client(timeout=45.0) as client:
+        response = client.post(
+            CLAUDE_API_URL,
+            headers={
+                "x-api-key": api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+            },
+            json={
+                "model": "claude-sonnet-4-6",
+                "max_tokens": max_tokens,
+                "system": system,
+                "messages": [{"role": "user", "content": content}],
+            },
+        )
+
+    if response.status_code != 200:
+        raise RuntimeError(f"Claude API error {response.status_code}: {response.text}")
+
+    return response.json()["content"][0]["text"].strip()
+
+
+# ── Step 1: Analyzer ──────────────────────────────────────────────────────────
+
+def _analyze(
+    promotion_prompt: str,
+    reference_image_b64: str | None,
+    reference_image_mime: str,
+) -> dict:
+    """
+    Claude Analyzer: picks best style + describes the drink in detail.
+    Falls back to sky_float with a generic description if Claude is unavailable.
+    """
+    try:
+        raw = _call_claude(
+            system=ANALYZER_SYSTEM,
+            user_text=f"Promo text: {promotion_prompt}",
+            image_b64=reference_image_b64,
+            image_mime=reference_image_mime,
+            max_tokens=512,
+        )
+        result = json.loads(raw)
+        print(f"[image_agent] Analyzer → style={result.get('style')} | {result.get('reason', '')}")
+        return result
+    except Exception as e:
+        print(f"[image_agent] Analyzer error: {e} — using defaults.")
+        return {
+            "drink_description": (
+                "A beautifully presented iced coffee drink in a clear plastic cup "
+                f"with a dome lid, wide black straw, caramel-brown layered drink, "
+                f"condensation on the outside, lots of ice. Related to: {promotion_prompt}"
+            ),
+            "style": "sky_float",
+            "reason": "Default fallback.",
+        }
+
+
+# ── Step 2: Engineer ──────────────────────────────────────────────────────────
+
+def _engineer_prompt(
+    style: str,
+    drink_description: str,
+    shop_name: str,
+    promotion_prompt: str,
+    reference_image_b64: str | None,
+    reference_image_mime: str,
+) -> str:
+    """
+    Claude Engineer: writes the final hyper-specific Gemini image prompt from scratch.
+    Falls back to a basic style template if Claude is unavailable.
+    """
+    style_guide = STYLE_GUIDES.get(style, STYLE_GUIDES["sky_float"])
+    user_text = (
+        f"STYLE GUIDE:\n{style_guide}\n\n"
+        f"DRINK DESCRIPTION:\n{drink_description}\n\n"
+        f"SHOP NAME: {shop_name}\n"
+        f"PROMOTION: {promotion_prompt}\n\n"
+        "Write the complete Gemini image generation prompt now."
+    )
 
     try:
-        with httpx.Client(timeout=30.0) as client:
-            response = client.post(
-                CLAUDE_API_URL,
-                headers={
-                    "x-api-key": api_key,
-                    "anthropic-version": "2023-06-01",
-                    "content-type": "application/json",
-                },
-                json=payload,
-            )
-        if response.status_code == 200:
-            raw = response.json()["content"][0]["text"].strip()
-            return json.loads(raw)
+        prompt = _call_claude(
+            system=ENGINEER_SYSTEM,
+            user_text=user_text,
+            image_b64=reference_image_b64,
+            image_mime=reference_image_mime,
+            max_tokens=1024,
+        )
+        print(f"[image_agent] Engineer → wrote {len(prompt)} char prompt.")
+        return prompt
     except Exception as e:
-        print(f"[image_agent] Meta-prompt error: {e} — using default style.")
+        print(f"[image_agent] Engineer error: {e} — using style template directly.")
+        # Fallback: fill the style guide template directly with the drink description
+        guide = STYLE_GUIDES.get(style, STYLE_GUIDES["sky_float"])
+        return (
+            f"Photorealistic commercial café advertisement photograph.\n\n"
+            f"HERO PRODUCT: {drink_description}\n\n"
+            f"{guide}\n\n"
+            f"Ultra high quality, 4K, square 1:1 format.\n"
+            f"--no text, no words, no letters, no watermarks, no overlays"
+        )
 
-    return {
-        "drink_description": (
-            f"A beautifully presented iced coffee drink in a clear plastic cup "
-            f"with a dome lid and black straw. Related to: {promotion_prompt}"
-        ),
-        "style": "sky_float",
-        "reason": "Fallback style due to analysis error.",
+
+# ── Step 3: Gemini image generation ──────────────────────────────────────────
+
+def _call_gemini(
+    prompt: str,
+    api_key: str,
+    reference_image_b64: str | None = None,
+    reference_image_mime: str = "image/jpeg",
+) -> tuple[bytes, str]:
+    parts = []
+    if reference_image_b64:
+        parts.append({
+            "inlineData": {"mimeType": reference_image_mime, "data": reference_image_b64}
+        })
+    parts.append({"text": prompt})
+
+    payload = {
+        "contents": [{"parts": parts}],
+        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
     }
 
+    url = f"{GEMINI_API_URL}?key={api_key}"
+    with httpx.Client(timeout=90.0) as client:
+        response = client.post(url, json=payload)
 
-# ── Step 2: Pillow text overlay ───────────────────────────────────────────────
+    if response.status_code != 200:
+        raise RuntimeError(f"Gemini API error {response.status_code}: {response.text}")
+
+    data = response.json()
+    try:
+        for part in data["candidates"][0]["content"]["parts"]:
+            if "inlineData" in part:
+                mime = part["inlineData"].get("mimeType", "image/png")
+                raw  = base64.b64decode(part["inlineData"]["data"])
+                return raw, mime
+    except (KeyError, IndexError) as e:
+        raise RuntimeError(f"Could not parse Gemini response: {e}\nRaw: {data}")
+
+    raise RuntimeError("No image returned from Gemini API")
+
+
+# ── Step 4: Pillow text overlay ───────────────────────────────────────────────
 
 _FONT_CANDIDATES = [
     "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
@@ -476,7 +404,6 @@ def _load_font(size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
 
 
 def _split_lines(text: str, max_chars: int = 18) -> list[str]:
-    """Break promo text into short punchy uppercase lines."""
     words = text.split()
     lines, current = [], []
     for word in words:
@@ -494,8 +421,7 @@ def _hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
     h = hex_color.lstrip("#")
     if len(h) == 3:
         h = "".join(c * 2 for c in h)
-    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-    return r, g, b
+    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
 
 
 def overlay_promo_text(
@@ -504,103 +430,47 @@ def overlay_promo_text(
     shop_name: str,
     brand_color: str = "#C8A27C",
 ) -> bytes:
-    """
-    Composite shop name + promo text onto the image using Pillow.
-    Returns the final composited image as PNG bytes.
-    """
     img = Image.open(io.BytesIO(image_bytes)).convert("RGBA")
     w, h = img.size
 
-    # ── Dark gradient overlay at the bottom third ──────────────────────────
-    overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    draw_ov = ImageDraw.Draw(overlay)
-    gradient_top = int(h * 0.62)
-    for row in range(gradient_top, h):
-        progress = (row - gradient_top) / (h - gradient_top)
-        alpha = int(200 * (progress ** 0.6))
+    # Dark gradient in bottom 38% of image for text readability
+    overlay    = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    draw_ov    = ImageDraw.Draw(overlay)
+    grad_start = int(h * 0.62)
+    for row in range(grad_start, h):
+        progress = (row - grad_start) / (h - grad_start)
+        alpha    = int(210 * (progress ** 0.55))
         draw_ov.line([(0, row), (w, row)], fill=(0, 0, 0, alpha))
-    img = Image.alpha_composite(img, overlay)
-
+    img  = Image.alpha_composite(img, overlay)
     draw = ImageDraw.Draw(img)
 
-    # ── Font sizes relative to image width ─────────────────────────────────
     font_shop  = _load_font(max(28, w // 36))
     font_promo = _load_font(max(52, w // 16))
-
-    # ── Shop name ──────────────────────────────────────────────────────────
     accent_rgb = _hex_to_rgb(brand_color)
-    shop_text  = shop_name.upper()
-    bbox       = draw.textbbox((0, 0), shop_text, font=font_shop)
-    shop_w     = bbox[2] - bbox[0]
-    shop_y     = int(h * 0.67)
+
+    # Shop name (accent color, small)
+    shop_text = shop_name.upper()
+    bbox      = draw.textbbox((0, 0), shop_text, font=font_shop)
+    shop_w    = bbox[2] - bbox[0]
+    shop_y    = int(h * 0.67)
     draw.text(((w - shop_w) // 2, shop_y), shop_text, font=font_shop,
-              fill=(*accent_rgb, 220))
+              fill=(*accent_rgb, 230))
 
-    # ── Promo lines ────────────────────────────────────────────────────────
+    # Promo lines (white, bold, large)
     lines  = _split_lines(promotion_prompt)
-    line_h = (draw.textbbox((0, 0), "A", font=font_promo)[3]) + 8
+    line_h = draw.textbbox((0, 0), "A", font=font_promo)[3] + 10
     y      = int(h * 0.73)
-
     for line in lines:
         bbox   = draw.textbbox((0, 0), line, font=font_promo)
         line_w = bbox[2] - bbox[0]
         x      = (w - line_w) // 2
-        # Drop shadow
-        draw.text((x + 3, y + 3), line, font=font_promo, fill=(0, 0, 0, 160))
-        # Main text
-        draw.text((x, y), line, font=font_promo, fill=(255, 255, 255, 255))
+        draw.text((x + 3, y + 3), line, font=font_promo, fill=(0, 0, 0, 160))  # shadow
+        draw.text((x, y),         line, font=font_promo, fill=(255, 255, 255, 255))
         y += line_h
 
-    result = img.convert("RGB")
-    buf    = io.BytesIO()
-    result.save(buf, format="PNG", optimize=True)
+    buf = io.BytesIO()
+    img.convert("RGB").save(buf, format="PNG", optimize=True)
     return buf.getvalue()
-
-
-# ── Step 3: Gemini image generation ──────────────────────────────────────────
-
-def _call_gemini(
-    prompt: str,
-    api_key: str,
-    reference_image_base64: str | None = None,
-    reference_image_mime: str = "image/jpeg",
-) -> tuple[bytes, str]:
-    """
-    Call Gemini and return (raw_image_bytes, mime_type).
-    """
-    parts = []
-    if reference_image_base64:
-        parts.append({
-            "inlineData": {
-                "mimeType": reference_image_mime,
-                "data":     reference_image_base64,
-            }
-        })
-    parts.append({"text": prompt})
-
-    payload = {
-        "contents": [{"parts": parts}],
-        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
-    }
-
-    url = f"{GEMINI_API_URL}?key={api_key}"
-    with httpx.Client(timeout=90.0) as client:
-        response = client.post(url, json=payload)
-
-    if response.status_code != 200:
-        raise RuntimeError(f"Gemini API error {response.status_code}: {response.text}")
-
-    data = response.json()
-    try:
-        for part in data["candidates"][0]["content"]["parts"]:
-            if "inlineData" in part:
-                mime  = part["inlineData"].get("mimeType", "image/png")
-                raw   = base64.b64decode(part["inlineData"]["data"])
-                return raw, mime
-    except (KeyError, IndexError) as e:
-        raise RuntimeError(f"Could not parse Gemini response: {e}\nRaw: {data}")
-
-    raise RuntimeError("No image returned from Gemini API")
 
 
 # ── Public entry point ────────────────────────────────────────────────────────
@@ -610,18 +480,12 @@ def generate_poster(
     shop_name: str,
     aesthetic: str,
     colors: list[str],
-    template_id: str = "centered",          # kept for API compatibility; style is auto-selected
+    template_id: str = "centered",           # kept for caller compatibility; style is auto-selected
     reference_image_base64: str | None = None,
     reference_image_mime: str = "image/jpeg",
 ) -> dict:
     """
-    Generate a promotional poster.
-
-    Steps:
-      1. Claude picks the best visual style and describes the drink.
-      2. The matching style function builds a Gemini image prompt.
-      3. Gemini generates a clean product photo (no text).
-      4. Pillow burns the shop name + promo text onto the image.
+    Generate a promotional poster via the 4-step pipeline.
 
     Returns:
         {
@@ -631,9 +495,9 @@ def generate_poster(
             "style_used":     str,
         }
     """
-    _ = aesthetic, template_id  # auto-selected by _analyze_promo; kept for caller compatibility
-    mock_mode = os.getenv("MOCK_IMAGE_GENERATION", "false").lower() == "true"
+    _ = aesthetic, template_id  # kept for caller compatibility
 
+    mock_mode = os.getenv("MOCK_IMAGE_GENERATION", "false").lower() == "true"
     if mock_mode:
         return {
             "image_base64":   _MOCK_B64,
@@ -646,23 +510,24 @@ def generate_poster(
     if not api_key:
         raise ValueError("GEMINI_API_KEY not set. Add it to backend/.env or set MOCK_IMAGE_GENERATION=true.")
 
-    # Step 1 — meta-prompt: pick style + describe drink
-    analysis = _analyze_promo(promotion_prompt, reference_image_base64, reference_image_mime)
-    style    = analysis.get("style", "sky_float")
-    drink_desc = analysis.get("drink_description", promotion_prompt)
-    print(f"[image_agent] Style: {style} | {analysis.get('reason', '')}")
+    # Step 1 — Analyzer: pick style + describe drink
+    analysis     = _analyze(promotion_prompt, reference_image_base64, reference_image_mime)
+    style        = analysis.get("style", "sky_float")
+    drink_desc   = analysis.get("drink_description", promotion_prompt)
 
-    # Step 2 — build image prompt from the chosen style function
-    style_fn = STYLE_FUNCTIONS.get(style, sky_float)
-    prompt   = style_fn(drink_desc)
-
-    # Step 3 — call Gemini
-    image_bytes, mime = _call_gemini(
-        prompt, api_key,
+    # Step 2 — Engineer: write the final custom Gemini prompt
+    final_prompt = _engineer_prompt(
+        style, drink_desc, shop_name, promotion_prompt,
         reference_image_base64, reference_image_mime,
     )
 
-    # Step 4 — Pillow text overlay
+    # Step 3 — Gemini: generate clean product photo
+    image_bytes, mime = _call_gemini(
+        final_prompt, api_key,
+        reference_image_base64, reference_image_mime,
+    )
+
+    # Step 4 — Pillow: burn text onto image
     brand_color = colors[0] if colors else "#C8A27C"
     try:
         image_bytes = overlay_promo_text(image_bytes, promotion_prompt, shop_name, brand_color)
@@ -674,6 +539,6 @@ def generate_poster(
     return {
         "image_base64":   b64,
         "image_data_url": f"data:{mime};base64,{b64}",
-        "prompt_used":    prompt,
+        "prompt_used":    final_prompt,
         "style_used":     style,
     }
