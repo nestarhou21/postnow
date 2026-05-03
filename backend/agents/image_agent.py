@@ -60,6 +60,10 @@ STYLE_GUIDES = {
         No surface — drink floats in open sky on its coffee bean pedestal.
         MOOD: Vibrant, energetic, celebratory Southeast Asian café marketing.
         Sky blue, cream and warm brown palette. Fun, fresh, commercial.
+        TEXT: Product name in large bold white text, bottom-center of the poster.
+        Price or promotion callout (e.g. "20% OFF", "6,000 ៛") directly below in slightly
+        smaller bold yellow or accent-colored text. Shop name small, clean sans-serif,
+        top-right corner in white. Preserve any logo or branding printed on the cup exactly.
     """).strip(),
 
     "dark_moody": textwrap.dedent("""
@@ -74,6 +78,9 @@ STYLE_GUIDES = {
         folded linen cloth. Everything handcrafted and intentional.
         MOOD: Premium, intimate, slow coffee culture. Deep brown, mocha, dark chocolate palette.
         Zero cold colors. High-end café luxury.
+        TEXT: Product name in large elegant white or warm gold serif font, lower-center.
+        Price or promo text in smaller refined weight directly below. Shop name hairline thin,
+        top-left corner in warm gold or cream. Any logo on the cup must be preserved exactly.
     """).strip(),
 
     "clean_minimal": textwrap.dedent("""
@@ -87,6 +94,10 @@ STYLE_GUIDES = {
         one coffee bean or one clean straw. Zero clutter.
         MOOD: Elegant, modern, confident, simple. Premium brand lookbook aesthetic.
         Off-white, cream, soft beige — drink's own color is the only accent.
+        TEXT: Shop name in thin light-weight uppercase letters, top-center, dark grey.
+        Product name in a single refined accent color, centered below the drink.
+        Price in small grey type at the very bottom. Typography minimal and breathable.
+        Any logo or text printed on the cup must remain exactly as it appears.
     """).strip(),
 
     "flat_lay": textwrap.dedent("""
@@ -100,6 +111,9 @@ STYLE_GUIDES = {
         coffee beans, small fresh green leaves. A hand reaching in from the frame edge
         adds life and human connection.
         MOOD: Instagram-able, fresh, curated café lifestyle. Warm peach, yellow, cream, brown.
+        TEXT: Shop name as a small clean label or card prop within the flat lay scene.
+        Promo text in a clean modern sans-serif as an overlay at the top of the image.
+        Price callout in a bold accent color. Any logo on the cup preserved exactly as-is.
     """).strip(),
 
     "outdoor_lifestyle": textwrap.dedent("""
@@ -114,6 +128,9 @@ STYLE_GUIDES = {
         Drink on a woven rattan tray on a soft picnic blanket.
         Fresh fruits or wildflowers arranged naturally on the tray.
         MOOD: Relaxed, lifestyle, warm, outdoor freedom. Fresh green, sky blue, warm cream.
+        TEXT: Very minimal text overlay at the bottom of the frame. Shop name small and white.
+        Promo text in a clean light font, one or two short lines maximum.
+        Price in a subtle accent color. Any branding on the cup preserved exactly.
     """).strip(),
 
     "close_up_macro": textwrap.dedent("""
@@ -127,6 +144,9 @@ STYLE_GUIDES = {
         SCENE: Completely blurred smooth cream or off-white bokeh background.
         Nothing recognizable behind the drink. Zero props, zero distractions.
         MOOD: Satisfying, premium, deeply sensory. High-end food and beverage magazine cover.
+        TEXT: Shop name very small in one corner, white or dark depending on background.
+        Product name in a refined font at the bottom edge. Price minimal and understated.
+        Any logo or branding printed on the cup must be sharp and fully preserved.
     """).strip(),
 
     "rustic_vintage": textwrap.dedent("""
@@ -142,6 +162,10 @@ STYLE_GUIDES = {
         scattered coffee beans, dried pampas grass in background.
         MOOD: Artisan, handcrafted, heritage. Warm brown, terracotta, caramel, copper, cream.
         Specialty single-origin coffee roaster editorial.
+        TEXT: Shop name in a warm vintage serif font at the top of the poster.
+        Product name in earthy brown or terracotta tones, lower section of the poster.
+        Price or promo callout in a complementary warm accent. Typography feels hand-crafted.
+        Any logo or branding on the cup preserved exactly without modification.
     """).strip(),
 
     "neon_night": textwrap.dedent("""
@@ -157,6 +181,10 @@ STYLE_GUIDES = {
         Scattered sugar crystals or crushed ice around the base sparkle like jewels.
         MOOD: Bold, dramatic, nightlife, urban, trendy. Deep dark green, black, rich gold, warm amber.
         High energy late-night café atmosphere.
+        TEXT: Shop name in bold glowing or neon-style lettering at the top.
+        Product name large and luminous, bottom-center, with a subtle glow effect.
+        Price or promo in bright gold or electric accent color. High contrast, unmissable.
+        Any logo or branding printed on the cup preserved exactly as it appears.
     """).strip(),
 }
 
@@ -191,28 +219,34 @@ Respond in this exact JSON format only — no markdown, no backticks, raw JSON:
 """.strip()
 
 ENGINEER_SYSTEM = """
-You are a world-class commercial photography director who writes image generation prompts
+You are a world-class commercial poster designer and image generation prompt engineer
 for Southeast Asian café advertising. Your prompts produce photorealistic, commercially
 polished results that look like professional paid campaigns.
 
 You will receive:
-- STYLE GUIDE: Exact composition, camera, lighting and scene rules to follow
+- STYLE GUIDE: Exact composition, camera, lighting, scene, and TEXT placement rules
 - DRINK DESCRIPTION: The specific drink that must appear — follow every detail precisely
-- SHOP NAME and PROMOTION CONTEXT
+- SHOP NAME, PROMOTION TEXT, and BRAND COLORS
 
 Your task: Write ONE complete, optimized, highly specific image generation prompt.
 
 Critical rules:
 1. Follow the STYLE GUIDE's composition, camera, lighting, and scene rules exactly.
 2. Replace every generic drink reference with the exact DRINK DESCRIPTION details.
-   The cup's material, color, lid, straw, layers, toppings must all be described explicitly.
-3. If a reference photo is attached, the drink in the generated image must match it exactly —
-   same cup shape, same colors, same branding, same visual identity.
-4. The scene must feel physically real — every surface, liquid, ice cube, droplet
-   responds to light naturally. No CGI look, no digital art feel.
-5. The image must contain ABSOLUTELY ZERO text, words, letters, numbers, watermarks,
-   overlays, UI elements, or digital effects of any kind.
-6. End the prompt with: --no text, no words, no letters, no watermarks, no overlays
+   Cup material, color, lid, straw, layers, toppings must all be described explicitly.
+3. If a reference photo is attached, the drink must match it exactly —
+   same cup shape, same colors, same branding on the cup, same visual identity.
+4. The scene must feel physically real. No CGI look, no digital art feel.
+5. TYPOGRAPHY — this is a poster, it must have text:
+   - Include the shop name exactly as given, small, in the corner specified by the style.
+   - Include the main promotion as short punchy ad copy (2–4 words per line, 2–3 lines max).
+     Do NOT copy the full promo sentence — write real ad copy. Example: for
+     "20% off iced latte at 6000 riels" write "20% OFF" on one line and "6,000 ៛" below.
+   - Use the brand colors for text accents where the style guide suggests.
+   - Typography must be clean, legible, and match the style's mood.
+6. LOGO: If any logo or brand text is printed on the cup, preserve it exactly — never erase it.
+7. Final output quality: square 1:1 format, 1080×1080px, Instagram-ready.
+   Professional advertising agency standard. No AI artefacts, no generic stock overlays.
 
 Write in vivid present-tense descriptive language. Be specific. Be cinematic.
 Output ONLY the raw prompt text. No explanation, no labels, no JSON. Just the prompt.
@@ -296,18 +330,21 @@ def _engineer_prompt(
     drink_description: str,
     shop_name: str,
     promotion_prompt: str,
+    colors: list[str],
     reference_image_b64: str | None,
     reference_image_mime: str,
 ) -> str:
     """
-    Claude Engineer: writes the final hyper-specific Gemini image prompt from scratch.
-    Falls back to a basic style template if Claude is unavailable.
+    Gemini Engineer: writes the final hyper-specific Gemini image prompt from scratch.
+    Falls back to a basic style template if Gemini text API is unavailable.
     """
-    style_guide = STYLE_GUIDES.get(style, STYLE_GUIDES["sky_float"])
+    style_guide  = STYLE_GUIDES.get(style, STYLE_GUIDES["sky_float"])
+    color_str    = " and ".join(colors) if colors else "#C8A27C and #5A3E2B"
     user_text = (
         f"STYLE GUIDE:\n{style_guide}\n\n"
         f"DRINK DESCRIPTION:\n{drink_description}\n\n"
         f"SHOP NAME: {shop_name}\n"
+        f"BRAND COLORS: {color_str}\n"
         f"PROMOTION: {promotion_prompt}\n\n"
         "Write the complete Gemini image generation prompt now."
     )
@@ -326,11 +363,12 @@ def _engineer_prompt(
         # Fallback: fill the style guide template directly with the drink description
         guide = STYLE_GUIDES.get(style, STYLE_GUIDES["sky_float"])
         return (
-            f"Photorealistic commercial café advertisement photograph.\n\n"
+            f"Photorealistic commercial café advertisement poster for '{shop_name}'.\n\n"
             f"HERO PRODUCT: {drink_description}\n\n"
             f"{guide}\n\n"
-            f"Ultra high quality, 4K, square 1:1 format.\n"
-            f"--no text, no words, no letters, no watermarks, no overlays"
+            f"PROMOTION TEXT ON POSTER: {promotion_prompt}\n"
+            f"BRAND COLORS: {color_str}\n\n"
+            f"Ultra high quality, 4K, square 1:1 format, Instagram-ready."
         )
 
 
@@ -511,7 +549,7 @@ def generate_poster(
 
     # Step 2 — Engineer: write the final custom Gemini prompt
     final_prompt = _engineer_prompt(
-        style, drink_desc, shop_name, promotion_prompt,
+        style, drink_desc, shop_name, promotion_prompt, colors,
         reference_image_base64, reference_image_mime,
     )
 
