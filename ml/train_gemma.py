@@ -309,7 +309,7 @@ def train(args):
     # ── Trainer ───────────────────────────────────────────────────────────────
     trainer = SFTTrainer(
         model=model,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         args=sft_config,
         train_dataset=train_ds,
         eval_dataset=val_ds,
