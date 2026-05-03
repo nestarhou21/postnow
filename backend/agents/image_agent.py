@@ -17,11 +17,14 @@ import textwrap
 import httpx
 from PIL import Image, ImageDraw, ImageFont
 
-GEMINI_API_URL = (
+GEMINI_IMAGE_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
     "gemini-3.1-flash-image-preview:generateContent"
 )
-CLAUDE_API_URL = "https://api.anthropic.com/v1/messages"
+GEMINI_TEXT_URL = (
+    "https://generativelanguage.googleapis.com/v1beta/models/"
+    "gemini-2.0-flash:generateContent"
+)
 
 # Mock poster returned when MOCK_IMAGE_GENERATION=true
 _MOCK_SVG = (
@@ -216,47 +219,39 @@ Output ONLY the raw prompt text. No explanation, no labels, no JSON. Just the pr
 """.strip()
 
 
-# ── Claude API helper ──────────────────────────────────────────────────────────
+# ── Gemini text API helper (used for Analyzer + Engineer) ─────────────────────
 
-def _call_claude(
+def _call_gemini_text(
     system: str,
     user_text: str,
     image_b64: str | None = None,
     image_mime: str = "image/jpeg",
-    max_tokens: int = 1024,
+    json_mode: bool = False,
 ) -> str:
-    api_key = os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise RuntimeError("ANTHROPIC_API_KEY not set")
+        raise RuntimeError("GEMINI_API_KEY not set")
 
-    content: list = []
+    parts: list = []
     if image_b64:
-        content.append({
-            "type": "image",
-            "source": {"type": "base64", "media_type": image_mime, "data": image_b64},
-        })
-    content.append({"type": "text", "text": user_text})
+        parts.append({"inlineData": {"mimeType": image_mime, "data": image_b64}})
+    parts.append({"text": user_text})
 
+    payload: dict = {
+        "system_instruction": {"parts": [{"text": system}]},
+        "contents": [{"parts": parts}],
+    }
+    if json_mode:
+        payload["generationConfig"] = {"responseMimeType": "application/json"}
+
+    url = f"{GEMINI_TEXT_URL}?key={api_key}"
     with httpx.Client(timeout=45.0) as client:
-        response = client.post(
-            CLAUDE_API_URL,
-            headers={
-                "x-api-key": api_key,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-            },
-            json={
-                "model": "claude-sonnet-4-6",
-                "max_tokens": max_tokens,
-                "system": system,
-                "messages": [{"role": "user", "content": content}],
-            },
-        )
+        response = client.post(url, json=payload)
 
     if response.status_code != 200:
-        raise RuntimeError(f"Claude API error {response.status_code}: {response.text}")
+        raise RuntimeError(f"Gemini text API error {response.status_code}: {response.text}")
 
-    return response.json()["content"][0]["text"].strip()
+    return response.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
 
 
 # ── Step 1: Analyzer ──────────────────────────────────────────────────────────
@@ -271,12 +266,12 @@ def _analyze(
     Falls back to sky_float with a generic description if Claude is unavailable.
     """
     try:
-        raw = _call_claude(
+        raw = _call_gemini_text(
             system=ANALYZER_SYSTEM,
             user_text=f"Promo text: {promotion_prompt}",
             image_b64=reference_image_b64,
             image_mime=reference_image_mime,
-            max_tokens=512,
+            json_mode=True,
         )
         result = json.loads(raw)
         print(f"[image_agent] Analyzer → style={result.get('style')} | {result.get('reason', '')}")
@@ -318,12 +313,11 @@ def _engineer_prompt(
     )
 
     try:
-        prompt = _call_claude(
+        prompt = _call_gemini_text(
             system=ENGINEER_SYSTEM,
             user_text=user_text,
             image_b64=reference_image_b64,
             image_mime=reference_image_mime,
-            max_tokens=1024,
         )
         print(f"[image_agent] Engineer → wrote {len(prompt)} char prompt.")
         return prompt
@@ -360,7 +354,7 @@ def _call_gemini(
         "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
     }
 
-    url = f"{GEMINI_API_URL}?key={api_key}"
+    url = f"{GEMINI_IMAGE_URL}?key={api_key}"
     with httpx.Client(timeout=90.0) as client:
         response = client.post(url, json=payload)
 
