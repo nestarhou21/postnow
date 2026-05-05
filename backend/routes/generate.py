@@ -39,44 +39,41 @@ _model_loaded = False
 
 def _try_load_local_model():
     """
-    Attempt to import ml.infer (mBART) or ml.infer_gemma (Gemma 4) and load the model.
-    Which module is used is controlled by LOCAL_MODEL_TYPE env var.
-    Called once at startup. Silently degrades if model not found.
+    Load caption model at startup.
+    Priority: Gemma 4 (MPS/CUDA) → mBART (CPU) → Gemini API fallback.
     """
     global _infer_module, _model_loaded
 
     if not USE_LOCAL_MODEL:
-        print("[generate] USE_LOCAL_MODEL=false — using Claude fallback only.")
+        print("[generate] USE_LOCAL_MODEL=false — using Gemini API for captions.")
         return
 
-    # The backend runs from the backend/ directory; go one level up to find ml/
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     if project_root not in sys.path:
         sys.path.insert(0, project_root)
 
-    module_name = "ml.infer_gemma" if LOCAL_MODEL_TYPE == "gemma" else "ml.infer"
-    label       = "Gemma 4"        if LOCAL_MODEL_TYPE == "gemma" else "mBART"
+    import importlib
 
-    try:
-        import importlib
-        infer_module = importlib.import_module(module_name)
-        # Use HF Hub ID directly if it looks like one (e.g. "Nestar2107/postnow_model")
-        # Otherwise treat as a local path relative to project root
-        if "/" in LOCAL_MODEL_PATH and not LOCAL_MODEL_PATH.startswith((".", "/")):
-            model_path = LOCAL_MODEL_PATH
-        else:
-            model_path = os.path.join(project_root, LOCAL_MODEL_PATH)
-        success      = infer_module.load_model(model_path)
-        if success:
-            _infer_module = infer_module
-            _model_loaded = True
-            print(f"[generate] ✅  Local {label} model loaded from {model_path}")
-        else:
-            print(f"[generate] ⚠  Local model not found at {model_path} — Claude fallback active.")
-    except ImportError as e:
-        print(f"[generate] ⚠  Could not import {module_name}: {e} — Claude fallback active.")
-    except Exception as e:
-        print(f"[generate] ⚠  Model load error: {e} — Claude fallback active.")
+    candidates = [
+        ("ml.infer_gemma", "Gemma 4",  "Nestar2107/postnow_gemma"),
+        ("ml.infer",       "mBART",    "Nestar2107/postnow_model"),
+    ]
+
+    for module_name, label, hub_path in candidates:
+        try:
+            print(f"[generate] Trying {label}...")
+            infer_module = importlib.import_module(module_name)
+            success = infer_module.load_model(hub_path)
+            if success:
+                _infer_module = infer_module
+                _model_loaded = True
+                print(f"[generate] ✅  {label} loaded from {hub_path}")
+                return
+            print(f"[generate] ⚠  {label} load returned False — trying next.")
+        except Exception as e:
+            print(f"[generate] ⚠  {label} failed: {e} — trying next.")
+
+    print("[generate] ⚠  All local models failed — using Gemini API for captions.")
 
 
 # Load model at import time (i.e., at FastAPI startup)
