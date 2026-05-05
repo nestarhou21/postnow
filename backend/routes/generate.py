@@ -20,7 +20,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from db import get_db
 from routes.auth import get_current_user
-from agents.caption_agent import generate_caption as claude_generate_caption, _simple_caption
+from agents.caption_agent import generate_gemini_caption
 from agents.image_agent import generate_poster
 
 router   = APIRouter(prefix="/generate", tags=["generate"])
@@ -91,23 +91,7 @@ def _generate_caption_dispatch(
     aesthetic: str,
     colors: list,
 ) -> dict:
-    """
-    Try local model first; fall back to Claude on low confidence or failure.
-    Always returns {"en_caption", "kh_caption", "hashtags"}.
-    """
-    if _model_loaded and _infer_module is not None:
-        try:
-            result = _infer_module.generate_caption(
-                promotion_prompt, shop_name, aesthetic, colors
-            )
-            confidence = _infer_module.get_confidence(result)
-            if confidence >= CONFIDENCE_THRESHOLD:
-                return result
-            print(f"[generate] Local model confidence {confidence:.2f} < threshold — using simple fallback.")
-        except Exception as e:
-            print(f"[generate] Local model inference error: {e} — using simple fallback.")
-
-    return _simple_caption(promotion_prompt, shop_name, aesthetic)
+    return generate_gemini_caption(promotion_prompt, shop_name, aesthetic, colors)
 
 
 # ── Pydantic schemas ──────────────────────────────────────────────────────────
