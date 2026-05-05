@@ -49,6 +49,24 @@ Rules you MUST follow:
 Do not add any extra text, explanation, or commentary outside these three sections."""
 
 
+def _simple_caption(promotion_prompt: str, shop_name: str, aesthetic: str) -> dict:
+    """Template-based fallback — no API key needed."""
+    emoji = "✨" if aesthetic == "Bold" else ""
+    en = (
+        f"{emoji} {promotion_prompt} at {shop_name}! "
+        f"Come visit us and enjoy this special offer. "
+        f"Tag a friend you'd love to share this with. "
+        f"See you soon! {emoji}"
+    ).strip()
+    kh = (
+        f"មកទទួលបានការផ្តល់ជូនពិសេសនៅ {shop_name}! "
+        f"{promotion_prompt} — កុំខកខានឱកាសនេះ។ "
+        f"អញ្ជើញមិត្តភ័ក្តិរបស់អ្នកមកផងដែរ!"
+    )
+    tags = f"#{shop_name.replace(' ','')} #PhnomPenhCafe #កាហ្វេភ្នំពេញ #CambodianCoffee #SpecialOffer"
+    return {"en_caption": en, "kh_caption": kh, "hashtags": tags}
+
+
 def generate_caption(
     promotion_prompt: str,
     shop_name: str,
