@@ -97,7 +97,7 @@ class GemmaCaptionModel:
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
 
-        # Base model (optionally quantised)
+        # Base model
         if use_4bit and device == "cuda":
             bnb_config = BitsAndBytesConfig(
                 load_in_4bit=True,
@@ -111,21 +111,30 @@ class GemmaCaptionModel:
                 device_map="auto",
                 trust_remote_code=True,
             )
+        elif device == "mps":
+            # Apple Silicon — float16, no quantisation, low_cpu_mem_usage reduces
+            # peak RAM during the download/load phase (critical on 16 GB M1)
+            print("[infer_gemma] Apple Silicon detected — loading in float16 (no quantisation)")
+            base = AutoModelForCausalLM.from_pretrained(
+                base_model_id,
+                torch_dtype=torch.float16,
+                low_cpu_mem_usage=True,
+                trust_remote_code=True,
+            )
+            base = base.to("mps")
         else:
             base = AutoModelForCausalLM.from_pretrained(
                 base_model_id,
-                torch_dtype=torch.float16 if device != "cpu" else torch.float32,
-                device_map="auto" if device == "cuda" else None,
+                torch_dtype=torch.float32,
+                low_cpu_mem_usage=True,
                 trust_remote_code=True,
             )
-            if device != "cuda":
-                base = base.to(device)
 
         # Load LoRA adapter on top
         print(f"[infer_gemma] Loading LoRA adapter from {adapter_ref} ...")
         self.model = PeftModel.from_pretrained(base, adapter_ref)
         self.model.eval()
-        print("[infer_gemma] Model ready.")
+        print(f"[infer_gemma] ✅ Model ready on {device}.")
 
     # ── Public API ────────────────────────────────────────────────────────────
 
@@ -165,15 +174,15 @@ class GemmaCaptionModel:
             {"role": "system",    "content": SYSTEM_PROMPT},
             {"role": "user",      "content": user_msg},
         ]
-        # Use chat template to build the prompt
         prompt = self.tokenizer.apply_chat_template(
             messages,
             tokenize=False,
-            add_generation_prompt=True,   # adds the assistant turn prefix
+            add_generation_prompt=True,
         )
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+        inputs = self.tokenizer(prompt, return_tensors="pt", padding=True)
+        inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
-        with torch.no_grad():
+        with torch.inference_mode():
             output_ids = self.model.generate(
                 **inputs,
                 max_new_tokens=MAX_NEW_TOKENS,
@@ -184,7 +193,10 @@ class GemmaCaptionModel:
                 pad_token_id=self.tokenizer.eos_token_id,
             )
 
-        # Decode only the newly generated tokens (skip the prompt)
+        # Free MPS memory immediately after generation
+        if self.device == "mps":
+            torch.mps.empty_cache()
+
         new_tokens = output_ids[0][inputs["input_ids"].shape[1]:]
         return self.tokenizer.decode(new_tokens, skip_special_tokens=True)
 

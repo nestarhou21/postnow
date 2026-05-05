@@ -91,6 +91,9 @@ def _generate_caption_dispatch(
     aesthetic: str,
     colors: list,
 ) -> dict:
+    if _model_loaded and _infer_module is not None:
+        return _infer_module.generate_caption(promotion_prompt, shop_name, aesthetic, colors)
+    # Local model not available — use Gemini API
     return generate_gemini_caption(promotion_prompt, shop_name, aesthetic, colors)
 
 
