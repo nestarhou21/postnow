@@ -38,46 +38,45 @@ _MOCK_B64 = base64.b64encode(_MOCK_SVG.encode()).decode()
 # ── Master prompt ─────────────────────────────────────────────────────────────
 
 MASTER_SYSTEM = """
-You are a world-class commercial poster designer and creative director
-specialized in Southeast Asian café advertising (Cambodia, Vietnam, Thailand).
-You have designed viral café posters for KOI, Tiger Sugar, and Gong Cha.
+You are an expert AI image prompt engineer for Southeast Asian café advertising.
+You write prompts that make Google Gemini produce results that look like
+real paid campaigns for KOI, Tiger Sugar, and Gong Cha.
 
-Your job: given a café promotion and optional drink photo, write a stunning
-image generation prompt that produces a professional advertisement poster.
+STEP 1 — DRINK DESCRIPTION:
+If a photo is provided: describe it precisely — cup type, lid, straw color,
+drink color and layers, toppings, ice level, condensation, any logo on the cup.
+If no photo: invent a specific beautiful drink from the promo text keywords.
 
-STEP 1 — DESCRIBE THE DRINK:
-If a photo is provided, describe the drink in precise detail:
-cup material, size, lid style, straw, drink color and layers, toppings,
-ice, condensation, any branding/logo on the cup.
-If no photo, invent a beautiful specific drink that fits the promo keywords.
+STEP 2 — PICK A VISUAL CONCEPT based on the promotion energy:
+• EXPLOSION   → sale, discount, free, promo, celebrate (ingredients flying in vivid sky)
+• SPOTLIGHT   → premium, exclusive, luxury, signature (dramatic dark studio light)
+• MINIMAL     → new menu, launching, introducing (pure white studio, breathing room)
+• FLAT LAY    → variety, combo, collection, menu (overhead pastel surface, props)
+• LIFESTYLE   → weekend, chill, cozy, relax (golden hour outdoor, soft bokeh)
+• MACRO       → fresh, quality, ingredients, detail (extreme close-up, condensation drops)
+• RUSTIC      → artisan, handcrafted, heritage (warm wooden table, afternoon light)
+• NIGHT       → late night, midnight, party, urban (dark background, glowing spotlight)
 
-STEP 2 — INVENT A CREATIVE CONCEPT:
-Choose any visual direction that best fits the promotion's mood and energy.
-Examples (don't limit yourself to these):
-  • Floating in vivid blue sky with flying ingredients
-  • Single dramatic spotlight on dark background
-  • Ultra-clean white minimal luxury
-  • Overhead flat lay on pastel surface
-  • Golden hour outdoor picnic lifestyle
-  • Extreme close-up macro condensation
-  • Rustic wooden table artisan scene
-  • Neon night dramatic glow
-  • Colorful gradient explosion
-  • Split-layout bold typography
-  • Underwater or fantasy dreamscape
-  • Illustrated mixed-media collage
-Be bold. Match the concept to the energy of the promotion.
+STEP 3 — WRITE THE IMAGE PROMPT (60–90 words, punchy and keyword-dense):
 
-STEP 3 — WRITE THE IMAGE PROMPT (150–250 words):
-A complete, vivid, specific image generation prompt that:
-  - Describes the scene, composition, camera angle, lighting, mood in detail
-  - Names the drink precisely using the description from Step 1
-  - Specifies where the shop name and promo text appear on the poster
-  - Produces a commercially polished result, not a generic AI image
-  - Ends with: "Photorealistic, ultra high quality, 1080x1080px square Instagram poster."
+Follow this structure exactly:
+1. Style anchor: "Award-winning [style] commercial photograph, [brand reference] advertisement style,"
+2. Drink: exact description, 2–3 specific visual details
+3. Scene: 2–3 specific scene details separated by commas
+4. Lighting: one specific lighting description
+5. Mood keywords: 3–5 comma-separated words
+6. Technical: "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality."
+7. Text: "[shop_name] small elegant text top-right. [short punchy promo] bold bottom-center."
 
-Return raw JSON only — no markdown, no backticks:
-{"drink_description": "...", "concept": "one short line", "image_prompt": "full prompt here"}
+Rules:
+- 60–90 words MAX. Short and punchy always beats long and detailed.
+- Use real brand references: "KOI Café advertisement", "Tiger Sugar campaign poster", "Gong Cha promotional style"
+- Use specific camera specs — they dramatically improve output quality
+- Keep text instruction to ONE short sentence at the end
+- If reference photo provided, START the prompt with: "Reproduce the EXACT drink from the reference photo — same cup, colors, branding —"
+
+Return raw JSON only, no markdown:
+{"drink_description": "...", "concept": "one line", "image_prompt": "60-90 word prompt"}
 """.strip()
 
 
@@ -151,14 +150,15 @@ def _build_image_prompt(
     except Exception as e:
         print(f"[image_agent] Prompt builder error: {e} — using fallback prompt.")
 
-    # Fallback: simple direct prompt
+    # Fallback: short punchy direct prompt
+    prefix = "Reproduce the EXACT drink from the reference photo — same cup, colors, branding — " if reference_image_b64 else ""
     fallback = (
-        f"Professional Southeast Asian café advertisement poster for '{shop_name}'. "
-        f"A beautifully presented iced coffee drink as the hero, centered and vibrant. "
-        f"Promotion text '{promotion_prompt}' displayed prominently on the poster. "
-        f"Shop name '{shop_name}' in the corner. "
-        f"Commercial quality, eye-catching, Instagram-ready. "
-        f"Photorealistic, ultra high quality, 1080x1080px square Instagram poster."
+        f"{prefix}Award-winning beverage commercial photograph, KOI Café advertisement style, "
+        f"iced coffee drink hero centered, vivid and appetising, floating ingredients and coffee beans, "
+        f"bright vivid background, dramatic lighting, "
+        f"commercial, vibrant, Southeast Asian café marketing. "
+        f"Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
+        f"'{shop_name}' small white text top-right. '{promotion_prompt}' bold bottom-center."
     )
     return fallback, "fallback"
 
@@ -237,6 +237,14 @@ def generate_poster(
         promotion_prompt, shop_name, colors,
         reference_image_base64, reference_image_mime,
     )
+
+    # When a reference photo is provided, prepend a strong cup-consistency instruction
+    if reference_image_base64 and not prompt.startswith("Reproduce"):
+        prompt = (
+            "Reproduce the EXACT drink from the reference photo — "
+            "same cup shape, same colors, same branding on the cup — "
+            + prompt
+        )
 
     # Step 2 — Gemini image: generate the poster
     image_bytes, mime = _call_gemini_image(
