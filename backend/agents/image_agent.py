@@ -1,23 +1,17 @@
 """
 agents/image_agent.py — Gemini promotional poster generator
 
-2-step pipeline:
-  1. Gemini text   → reads the promo + optional photo, invents a creative concept,
-                     writes the full image generation prompt from scratch
-  2. Gemini image  → generates the poster from that prompt
+Single-step pipeline:
+  1. Python builds a punchy 60-90 word prompt (keyword-based concept selection, no API call)
+  2. Gemini image → generates the poster from that prompt
 """
 import os
 import base64
-import json
 import httpx
 
 GEMINI_IMAGE_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
     "gemini-3.1-flash-image-preview:generateContent"
-)
-GEMINI_TEXT_URL = (
-    "https://generativelanguage.googleapis.com/v1beta/models/"
-    "gemini-2.0-flash:generateContent"
 )
 
 _MOCK_SVG = (
@@ -35,135 +29,118 @@ _MOCK_SVG = (
 _MOCK_B64 = base64.b64encode(_MOCK_SVG.encode()).decode()
 
 
-# ── Master prompt ─────────────────────────────────────────────────────────────
+# ── Concept selection ─────────────────────────────────────────────────────────
 
-MASTER_SYSTEM = """
-You are an expert AI image prompt engineer for Southeast Asian café advertising.
-You write prompts that make Google Gemini produce results that look like
-real paid campaigns for KOI, Tiger Sugar, and Gong Cha.
+_CONCEPTS = [
+    ("explosion",  ["sale", "discount", "free", "promo", "deal", "off", "buy 1", "bogo", "celebrate", "%"]),
+    ("spotlight",  ["premium", "exclusive", "luxury", "signature", "special", "limited"]),
+    ("minimal",    ["new", "launching", "introducing", "launch", "arrive", "menu"]),
+    ("flat_lay",   ["variety", "combo", "collection", "set", "bundle", "assorted"]),
+    ("lifestyle",  ["weekend", "chill", "cozy", "relax", "morning", "afternoon", "enjoy"]),
+    ("macro",      ["fresh", "quality", "ingredient", "detail", "pure", "natural", "real"]),
+    ("rustic",     ["artisan", "handcraft", "heritage", "traditional", "homemade"]),
+    ("night",      ["night", "midnight", "late", "party", "urban", "evening"]),
+]
 
-STEP 1 — DRINK DESCRIPTION:
-If a photo is provided: describe it precisely — cup type, lid, straw color,
-drink color and layers, toppings, ice level, condensation, any logo on the cup.
-If no photo: invent a specific beautiful drink from the promo text keywords.
-
-STEP 2 — PICK A VISUAL CONCEPT based on the promotion energy:
-• EXPLOSION   → sale, discount, free, promo, celebrate (ingredients flying in vivid sky)
-• SPOTLIGHT   → premium, exclusive, luxury, signature (dramatic dark studio light)
-• MINIMAL     → new menu, launching, introducing (pure white studio, breathing room)
-• FLAT LAY    → variety, combo, collection, menu (overhead pastel surface, props)
-• LIFESTYLE   → weekend, chill, cozy, relax (golden hour outdoor, soft bokeh)
-• MACRO       → fresh, quality, ingredients, detail (extreme close-up, condensation drops)
-• RUSTIC      → artisan, handcrafted, heritage (warm wooden table, afternoon light)
-• NIGHT       → late night, midnight, party, urban (dark background, glowing spotlight)
-
-STEP 3 — WRITE THE IMAGE PROMPT (60–90 words, punchy and keyword-dense):
-
-Follow this structure exactly:
-1. Style anchor: "Award-winning [style] commercial photograph, [brand reference] advertisement style,"
-2. Drink: exact description, 2–3 specific visual details
-3. Scene: 2–3 specific scene details separated by commas
-4. Lighting: one specific lighting description
-5. Mood keywords: 3–5 comma-separated words
-6. Technical: "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality."
-7. Text: "[shop_name] small elegant text top-right. [short punchy promo] bold bottom-center."
-
-Rules:
-- 60–90 words MAX. Short and punchy always beats long and detailed.
-- Use real brand references: "KOI Café advertisement", "Tiger Sugar campaign poster", "Gong Cha promotional style"
-- Use specific camera specs — they dramatically improve output quality
-- Keep text instruction to ONE short sentence at the end
-- If reference photo provided, START the prompt with: "Reproduce the EXACT drink from the reference photo — same cup, colors, branding —"
-
-Return raw JSON only, no markdown:
-{"drink_description": "...", "concept": "one line", "image_prompt": "60-90 word prompt"}
-""".strip()
-
-
-# ── Gemini text API ───────────────────────────────────────────────────────────
-
-def _call_gemini_text(
-    system: str,
-    user_text: str,
-    image_b64: str | None = None,
-    image_mime: str = "image/jpeg",
-) -> str:
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        raise RuntimeError("GEMINI_API_KEY not set")
-
-    parts: list = []
-    if image_b64:
-        parts.append({"inlineData": {"mimeType": image_mime, "data": image_b64}})
-    parts.append({"text": user_text})
-
-    payload = {
-        "system_instruction": {"parts": [{"text": system}]},
-        "contents": [{"parts": parts}],
-        "generationConfig": {"responseMimeType": "application/json"},
-    }
-
-    url = f"{GEMINI_TEXT_URL}?key={api_key}"
-    with httpx.Client(timeout=45.0) as client:
-        response = client.post(url, json=payload)
-
-    if response.status_code != 200:
-        raise RuntimeError(f"Gemini text error {response.status_code}: {response.text}")
-
-    return response.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+_CONCEPT_PROMPTS = {
+    "explosion": (
+        "Award-winning explosion commercial photograph, Tiger Sugar campaign poster style, "
+        "{drink} hero centered on vivid gradient background, ingredients and coffee beans "
+        "flying dynamically around it, dramatic studio lighting from above, "
+        "vibrant, energetic, appetising, bold Southeast Asian café marketing. "
+        "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
+        "'{shop}' small elegant text top-right. '{promo}' bold bottom-center."
+    ),
+    "spotlight": (
+        "Award-winning spotlight commercial photograph, KOI Café advertisement style, "
+        "{drink} hero on deep dark background, single dramatic overhead spotlight, "
+        "rich reflections on the cup surface, moody luxury atmosphere, "
+        "premium, exclusive, sophisticated Southeast Asian café marketing. "
+        "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
+        "'{shop}' small elegant text top-right. '{promo}' bold bottom-center."
+    ),
+    "minimal": (
+        "Award-winning minimal commercial photograph, Gong Cha promotional style, "
+        "{drink} hero on pure white studio background, generous breathing room, "
+        "soft diffused natural lighting, clean and modern, "
+        "fresh, simple, refined Southeast Asian café marketing. "
+        "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
+        "'{shop}' small elegant text top-right. '{promo}' bold bottom-center."
+    ),
+    "flat_lay": (
+        "Award-winning flat lay commercial photograph, KOI Café advertisement style, "
+        "{drink} and props arranged on pastel surface overhead view, "
+        "soft natural side lighting, styled with flowers and coffee beans, "
+        "charming, curated, Instagram-worthy Southeast Asian café marketing. "
+        "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
+        "'{shop}' small elegant text top-right. '{promo}' bold bottom-center."
+    ),
+    "lifestyle": (
+        "Award-winning lifestyle commercial photograph, Tiger Sugar campaign poster style, "
+        "{drink} held by hand in golden hour outdoor café setting, "
+        "warm bokeh background, soft sunlight, inviting relaxed atmosphere, "
+        "warm, joyful, authentic Southeast Asian café marketing. "
+        "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
+        "'{shop}' small elegant text top-right. '{promo}' bold bottom-center."
+    ),
+    "macro": (
+        "Award-winning macro commercial photograph, Gong Cha promotional style, "
+        "{drink} extreme close-up showing condensation drops on the cup, "
+        "ice cubes and drink layers in sharp detail, dramatic side lighting, "
+        "fresh, pure, mouthwatering Southeast Asian café marketing. "
+        "Shot on Hasselblad H6D, 100mm macro f/2.8, ultra sharp, 4K, beverage commercial quality. "
+        "'{shop}' small elegant text top-right. '{promo}' bold bottom-center."
+    ),
+    "rustic": (
+        "Award-winning rustic commercial photograph, artisan café advertisement style, "
+        "{drink} on warm wooden table with afternoon natural light, "
+        "coffee beans and cinnamon sticks as props, cozy heritage atmosphere, "
+        "warm, handcrafted, authentic Southeast Asian café marketing. "
+        "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
+        "'{shop}' small elegant text top-right. '{promo}' bold bottom-center."
+    ),
+    "night": (
+        "Award-winning night commercial photograph, urban café advertisement style, "
+        "{drink} glowing on dark background with dramatic neon-accent spotlight, "
+        "city night atmosphere, moody and energetic, "
+        "bold, modern, vibrant Southeast Asian café marketing. "
+        "Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
+        "'{shop}' small elegant text top-right. '{promo}' bold bottom-center."
+    ),
+}
 
 
-# ── Step 1: Build the image prompt ───────────────────────────────────────────
+def _pick_concept(promotion_prompt: str) -> str:
+    t = promotion_prompt.lower()
+    for concept, keywords in _CONCEPTS:
+        if any(k in t for k in keywords):
+            return concept
+    return "explosion"  # default
 
-def _build_image_prompt(
+
+def _build_prompt(
     promotion_prompt: str,
     shop_name: str,
-    colors: list[str],
     reference_image_b64: str | None,
-    reference_image_mime: str,
 ) -> tuple[str, str]:
-    """
-    Ask Gemini to invent a creative concept and write the full image prompt.
-    Returns (image_prompt, concept).
-    """
-    color_str = ", ".join(colors) if colors else "#C8A27C, #5A3E2B"
-    user_text = (
-        f"Shop name: {shop_name}\n"
-        f"Brand colors: {color_str}\n"
-        f"Promotion: {promotion_prompt}"
-    )
+    concept = _pick_concept(promotion_prompt)
+    drink = "iced café drink"
 
-    try:
-        raw    = _call_gemini_text(
-            system=MASTER_SYSTEM,
-            user_text=user_text,
-            image_b64=reference_image_b64,
-            image_mime=reference_image_mime,
+    template = _CONCEPT_PROMPTS[concept]
+    prompt = template.format(drink=drink, shop=shop_name, promo=promotion_prompt)
+
+    if reference_image_b64:
+        prompt = (
+            "Reproduce the EXACT drink from the reference photo — "
+            "same cup shape, same colors, same branding on the cup — "
+            + prompt
         )
-        result = json.loads(raw)
-        prompt  = result.get("image_prompt", "")
-        concept = result.get("concept", "")
-        if prompt:
-            print(f"[image_agent] Concept: {concept}")
-            print(f"[image_agent] Prompt ({len(prompt)} chars): {prompt[:120]}...")
-            return prompt, concept
-    except Exception as e:
-        print(f"[image_agent] Prompt builder error: {e} — using fallback prompt.")
 
-    # Fallback: short punchy direct prompt
-    prefix = "Reproduce the EXACT drink from the reference photo — same cup, colors, branding — " if reference_image_b64 else ""
-    fallback = (
-        f"{prefix}Award-winning beverage commercial photograph, KOI Café advertisement style, "
-        f"iced coffee drink hero centered, vivid and appetising, floating ingredients and coffee beans, "
-        f"bright vivid background, dramatic lighting, "
-        f"commercial, vibrant, Southeast Asian café marketing. "
-        f"Shot on Hasselblad H6D, 85mm f/1.8, ultra sharp, 4K, beverage commercial quality. "
-        f"'{shop_name}' small white text top-right. '{promotion_prompt}' bold bottom-center."
-    )
-    return fallback, "fallback"
+    print(f"[image_agent] Concept: {concept} | Prompt ({len(prompt.split())} words)")
+    return prompt, concept
 
 
-# ── Step 2: Gemini image generation ──────────────────────────────────────────
+# ── Gemini image generation ───────────────────────────────────────────────────
 
 def _call_gemini_image(
     prompt: str,
@@ -184,7 +161,8 @@ def _call_gemini_image(
     }
 
     url = f"{GEMINI_IMAGE_URL}?key={api_key}"
-    with httpx.Client(timeout=90.0) as client:
+    timeout = httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=5.0)
+    with httpx.Client(timeout=timeout) as client:
         response = client.post(url, json=payload)
 
     if response.status_code != 200:
@@ -218,7 +196,7 @@ def generate_poster(
     Generate a promotional poster.
     Returns: {"image_base64", "image_data_url", "prompt_used", "style_used"}
     """
-    _ = aesthetic, template_id  # kept for caller compatibility
+    _ = aesthetic, template_id, colors  # kept for caller compatibility
 
     if os.getenv("MOCK_IMAGE_GENERATION", "false").lower() == "true":
         return {
@@ -232,21 +210,8 @@ def generate_poster(
     if not api_key:
         raise ValueError("GEMINI_API_KEY not set. Add it to backend/.env.")
 
-    # Step 1 — Gemini text: invent concept + write image prompt
-    prompt, concept = _build_image_prompt(
-        promotion_prompt, shop_name, colors,
-        reference_image_base64, reference_image_mime,
-    )
+    prompt, concept = _build_prompt(promotion_prompt, shop_name, reference_image_base64)
 
-    # When a reference photo is provided, prepend a strong cup-consistency instruction
-    if reference_image_base64 and not prompt.startswith("Reproduce"):
-        prompt = (
-            "Reproduce the EXACT drink from the reference photo — "
-            "same cup shape, same colors, same branding on the cup — "
-            + prompt
-        )
-
-    # Step 2 — Gemini image: generate the poster
     image_bytes, mime = _call_gemini_image(
         prompt, api_key, reference_image_base64, reference_image_mime,
     )
