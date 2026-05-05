@@ -13,6 +13,10 @@ GEMINI_IMAGE_URL = (
     "https://generativelanguage.googleapis.com/v1beta/models/"
     "gemini-3.1-flash-image-preview:generateContent"
 )
+IMAGEN_URL = (
+    "https://generativelanguage.googleapis.com/v1beta/models/"
+    "imagen-3.0-fast-generate-001:predict"
+)
 
 _MOCK_SVG = (
     '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080">'
@@ -159,29 +163,44 @@ def _build_prompt(
     return prompt, concept
 
 
-# ── Gemini image generation ───────────────────────────────────────────────────
+# ── Image generation ──────────────────────────────────────────────────────────
+
+_TIMEOUT = httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=5.0)
+
+
+def _call_imagen(prompt: str, api_key: str) -> tuple[bytes, str]:
+    """Imagen 3 fast — $0.02/image, text-to-image only."""
+    payload = {
+        "instances": [{"prompt": prompt}],
+        "parameters": {"sampleCount": 1, "aspectRatio": "1:1"},
+    }
+    url = f"{IMAGEN_URL}?key={api_key}"
+    with httpx.Client(timeout=_TIMEOUT) as client:
+        response = client.post(url, json=payload)
+
+    if response.status_code != 200:
+        raise RuntimeError(f"Imagen error {response.status_code}: {response.text}")
+
+    pred = response.json()["predictions"][0]
+    return base64.b64decode(pred["bytesBase64Encoded"]), pred.get("mimeType", "image/png")
+
 
 def _call_gemini_image(
     prompt: str,
     api_key: str,
-    reference_image_b64: str | None = None,
+    reference_image_b64: str,
     reference_image_mime: str = "image/jpeg",
 ) -> tuple[bytes, str]:
-    parts = []
-    if reference_image_b64:
-        parts.append({
-            "inlineData": {"mimeType": reference_image_mime, "data": reference_image_b64}
-        })
-    parts.append({"text": prompt})
-
+    """Gemini multimodal — only used when a reference photo is provided."""
     payload = {
-        "contents": [{"parts": parts}],
-        "generationConfig": {"responseModalities": ["IMAGE", "TEXT"]},
+        "contents": [{"parts": [
+            {"inlineData": {"mimeType": reference_image_mime, "data": reference_image_b64}},
+            {"text": prompt},
+        ]}],
+        "generationConfig": {"responseModalities": ["IMAGE"]},
     }
-
     url = f"{GEMINI_IMAGE_URL}?key={api_key}"
-    timeout = httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=5.0)
-    with httpx.Client(timeout=timeout) as client:
+    with httpx.Client(timeout=_TIMEOUT) as client:
         response = client.post(url, json=payload)
 
     if response.status_code != 200:
@@ -192,8 +211,7 @@ def _call_gemini_image(
         for part in data["candidates"][0]["content"]["parts"]:
             if "inlineData" in part:
                 mime = part["inlineData"].get("mimeType", "image/png")
-                raw  = base64.b64decode(part["inlineData"]["data"])
-                return raw, mime
+                return base64.b64decode(part["inlineData"]["data"]), mime
     except (KeyError, IndexError) as e:
         raise RuntimeError(f"Could not parse Gemini response: {e}\nRaw: {data}")
 
@@ -231,9 +249,14 @@ def generate_poster(
 
     prompt, concept = _build_prompt(promotion_prompt, shop_name, reference_image_base64)
 
-    image_bytes, mime = _call_gemini_image(
-        prompt, api_key, reference_image_base64, reference_image_mime,
-    )
+    if reference_image_base64:
+        # Multimodal Gemini — needed to see the reference drink photo
+        image_bytes, mime = _call_gemini_image(
+            prompt, api_key, reference_image_base64, reference_image_mime,
+        )
+    else:
+        # Imagen 3 fast — $0.02/image, no reference photo needed
+        image_bytes, mime = _call_imagen(prompt, api_key)
 
     b64 = base64.b64encode(image_bytes).decode()
     return {
