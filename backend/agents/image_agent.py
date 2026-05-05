@@ -110,6 +110,25 @@ _CONCEPT_PROMPTS = {
 }
 
 
+_DRINKS = [
+    "iced latte", "latte", "cold brew", "iced coffee", "espresso",
+    "americano", "cappuccino", "mocha", "flat white", "macchiato",
+    "matcha latte", "matcha", "bubble tea", "boba", "milk tea",
+    "thai tea", "taro", "strawberry smoothie", "smoothie",
+    "frappe", "frappuccino", "hot chocolate", "chocolate",
+    "caramel macchiato", "vanilla latte", "brown sugar latte",
+    "passion fruit", "lemonade", "iced tea", "green tea",
+]
+
+def _extract_drink(promotion_prompt: str) -> str:
+    t = promotion_prompt.lower()
+    for drink in _DRINKS:
+        if drink in t:
+            # capitalise nicely
+            return drink.title()
+    return "iced café drink"
+
+
 def _pick_concept(promotion_prompt: str) -> str:
     t = promotion_prompt.lower()
     for concept, keywords in _CONCEPTS:
@@ -124,7 +143,7 @@ def _build_prompt(
     reference_image_b64: str | None,
 ) -> tuple[str, str]:
     concept = _pick_concept(promotion_prompt)
-    drink = "iced café drink"
+    drink = _extract_drink(promotion_prompt)
 
     template = _CONCEPT_PROMPTS[concept]
     prompt = template.format(drink=drink, shop=shop_name, promo=promotion_prompt)

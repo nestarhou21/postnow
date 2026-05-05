@@ -197,6 +197,27 @@ const chatEl       = ref(null)
 const promptEl     = ref(null)
 const fileInput    = ref(null)
 
+// ── Shop name extraction from chat ───────────────────────────────────────────
+
+const SHOP_NAME_PATTERNS = [
+  /my (?:shop|café|cafe|coffee shop|store|restaurant) (?:is called|is named|is|called|named) ["']?([A-Za-z0-9 &'-]{2,30})["']?/i,
+  /(?:shop|café|cafe|coffee shop) name[:\s]+["']?([A-Za-z0-9 &'-]{2,30})["']?/i,
+  /i (?:own|run|have|manage) ["']?([A-Za-z0-9 &'-]{2,25})\s*(?:café|cafe|coffee|shop|bar)/i,
+  /["']([A-Za-z0-9 &'-]{2,25})\s*(?:café|cafe|coffee|shop|bar)["']/i,
+  /(?:called|named|it's|its)\s+["']?([A-Za-z0-9 &'-]{2,25})\s*(?:café|cafe|coffee|shop)?["']?/i,
+]
+
+function tryExtractShopName(text) {
+  for (const pattern of SHOP_NAME_PATTERNS) {
+    const m = text.match(pattern)
+    if (m && m[1]) {
+      const name = m[1].trim()
+      if (name.length >= 2) return name
+    }
+  }
+  return null
+}
+
 // ── Intent detection ──────────────────────────────────────────────────────────
 
 const GREETING_TRIGGERS = [
@@ -322,7 +343,16 @@ function send() {
 
   const text  = prompt.value.trim()
   const photo = photoPreview.value
-  const intent = detectIntent(text)
+
+  // Always try to extract shop name from what the user typed
+  const detected = tryExtractShopName(text)
+  if (detected) {
+    shopName.value = detected
+    showToast(`Shop name set to "${detected}"`)
+  }
+
+  // If a photo is attached, always generate — user is uploading a drink
+  const intent = photo ? 'generate' : detectIntent(text)
 
   messages.value.push({ role: 'user', text, photo })
   prompt.value       = ''
