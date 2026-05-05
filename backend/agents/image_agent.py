@@ -165,24 +165,30 @@ def _build_prompt(
 
 # ── Image generation ──────────────────────────────────────────────────────────
 
-_TIMEOUT = httpx.Timeout(connect=10.0, read=120.0, write=30.0, pool=5.0)
+_TIMEOUT = httpx.Timeout(connect=15.0, read=180.0, write=30.0, pool=5.0)
 
 
 def _call_imagen(prompt: str, api_key: str) -> tuple[bytes, str]:
-    """Imagen 3 fast — $0.02/image, text-to-image only."""
+    """Imagen 3 fast — $0.02/image, text-to-image only. Retries once on timeout."""
     payload = {
         "instances": [{"prompt": prompt}],
         "parameters": {"sampleCount": 1, "aspectRatio": "1:1"},
     }
     url = f"{IMAGEN_URL}?key={api_key}"
-    with httpx.Client(timeout=_TIMEOUT) as client:
-        response = client.post(url, json=payload)
 
-    if response.status_code != 200:
-        raise RuntimeError(f"Imagen error {response.status_code}: {response.text}")
-
-    pred = response.json()["predictions"][0]
-    return base64.b64decode(pred["bytesBase64Encoded"]), pred.get("mimeType", "image/png")
+    for attempt in range(2):
+        try:
+            with httpx.Client(timeout=_TIMEOUT) as client:
+                response = client.post(url, json=payload)
+            if response.status_code != 200:
+                raise RuntimeError(f"Imagen error {response.status_code}: {response.text}")
+            pred = response.json()["predictions"][0]
+            return base64.b64decode(pred["bytesBase64Encoded"]), pred.get("mimeType", "image/png")
+        except httpx.TimeoutException:
+            if attempt == 0:
+                print("[image_agent] Imagen timeout — retrying once...")
+            else:
+                raise RuntimeError("Imagen API timed out after 2 attempts.")
 
 
 def _call_gemini_image(
