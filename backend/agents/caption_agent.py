@@ -1,56 +1,83 @@
 """
-agents/caption_agent.py — Claude-powered bilingual caption generator
+agents/caption_agent.py — Bilingual caption generator
 
-Uses Anthropic Claude (claude-sonnet-4-6) to produce:
-  • English caption (≤150 words, Facebook/Instagram ready)
-  • Khmer caption (culturally adapted, NOT a literal translation)
-  • 5 relevant hashtags
+Priority:
+  1. Local model (mBART or Gemma) — loaded by generate.py at startup
+  2. Gemini API fallback (gemini-2.0-flash) — uses existing GEMINI_API_KEY
+  3. Simple template — last resort, no API needed
 """
 import os
 import re
-import anthropic
+import json
+import httpx
 
-_client = None
+GEMINI_TEXT_URL = (
+    "https://generativelanguage.googleapis.com/v1beta/models/"
+    "gemini-2.0-flash:generateContent"
+)
+
+_CAPTION_SYSTEM = """You are a bilingual social media manager for Cambodian coffee shops.
+Write promotional content for Facebook and Instagram that feels authentic and on-brand.
+
+Rules:
+1. English caption — max 120 words, conversational, ends with a call-to-action.
+2. Khmer caption — culturally adapted for Cambodian audience (NOT word-for-word translation). Natural, friendly tone. Use mixed Khmer-English for drink names (Latte, Cold Brew, etc.).
+3. Exactly 5 hashtags — mix English and Khmer, relevant to the promotion.
+4. No emojis unless aesthetic is Bold.
+5. Do NOT invent prices unless the prompt mentions them.
+
+Return raw JSON only, no markdown:
+{"en_caption": "...", "kh_caption": "...", "hashtags": "#tag1 #tag2 #tag3 #tag4 #tag5"}"""
 
 
-def _get_client() -> anthropic.Anthropic:
-    global _client
-    if _client is None:
-        _client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-    return _client
+def generate_gemini_caption(
+    promotion_prompt: str,
+    shop_name: str,
+    aesthetic: str,
+    colors: list[str],
+) -> dict:
+    """Generate caption using Gemini text API."""
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY not set")
 
+    user_text = (
+        f"Shop: {shop_name}\n"
+        f"Aesthetic: {aesthetic}\n"
+        f"Colors: {', '.join(colors)}\n"
+        f"Promotion: {promotion_prompt}\n\n"
+        f"Write a promotional social media caption."
+    )
 
-SYSTEM_PROMPT_TEMPLATE = """You are a social media manager for {shop_name}, a {aesthetic} coffee shop in Phnom Penh, Cambodia.
+    payload = {
+        "system_instruction": {"parts": [{"text": _CAPTION_SYSTEM}]},
+        "contents": [{"parts": [{"text": user_text}]}],
+        "generationConfig": {"responseMimeType": "application/json"},
+    }
 
-Your job is to write promotional content for Facebook and Instagram that feels authentic, warm, and on-brand.
+    url = f"{GEMINI_TEXT_URL}?key={api_key}"
+    with httpx.Client(timeout=30.0) as client:
+        response = client.post(url, json=payload)
 
-Brand personality:
-- Shop name: {shop_name}
-- Aesthetic: {aesthetic}
-- Brand colors (for reference/mood): {colors}
+    if response.status_code != 200:
+        raise RuntimeError(f"Gemini caption error {response.status_code}: {response.text}")
 
-Rules you MUST follow:
-1. Write an English caption first — max 150 words, conversational, ends with a call-to-action.
-2. Write a Khmer caption second — culturally adapted for a Cambodian audience (NOT a word-for-word translation). Natural, friendly tone.
-3. Write exactly 5 hashtags on one line, mixing English and Khmer hashtags relevant to the promotion.
-4. Do NOT use emojis unless the aesthetic is "Bold".
-5. Do NOT include pricing unless the user's prompt mentions it.
-6. Return your answer in EXACTLY this format with these section markers:
-
-[EN]
-<english caption here>
-
-[KH]
-<khmer caption here>
-
-[TAGS]
-<5 hashtags here>
-
-Do not add any extra text, explanation, or commentary outside these three sections."""
+    raw = response.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+    result = json.loads(raw)
+    return {
+        "en_caption": result.get("en_caption", ""),
+        "kh_caption": result.get("kh_caption", ""),
+        "hashtags":   result.get("hashtags", ""),
+    }
 
 
 def _simple_caption(promotion_prompt: str, shop_name: str, aesthetic: str) -> dict:
-    """Template-based fallback — no API key needed."""
+    """Last-resort template fallback — tries Gemini first, then uses template."""
+    try:
+        return generate_gemini_caption(promotion_prompt, shop_name, aesthetic, ["#C8A27C", "#5A3E2B"])
+    except Exception:
+        pass
+
     emoji = "✨" if aesthetic == "Bold" else ""
     en = (
         f"{emoji} {promotion_prompt} at {shop_name}! "
@@ -73,43 +100,27 @@ def generate_caption(
     aesthetic: str,
     colors: list[str],
 ) -> dict:
-    """
-    Call Claude to generate bilingual caption + hashtags.
+    """Claude API caption generator (requires ANTHROPIC_API_KEY)."""
+    import anthropic
 
-    Returns:
-        {
-            "en_caption": str,
-            "kh_caption": str,
-            "hashtags": str,
-        }
-    """
-    system = SYSTEM_PROMPT_TEMPLATE.format(
-        shop_name=shop_name,
-        aesthetic=aesthetic,
-        colors=", ".join(colors),
+    client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    system = (
+        f"You are a social media manager for {shop_name}, a {aesthetic} coffee shop in Phnom Penh, Cambodia. "
+        f"Write promotional content that feels authentic and on-brand. Brand colors: {', '.join(colors)}.\n\n"
+        "Return EXACTLY this format:\n[EN]\n<english caption>\n\n[KH]\n<khmer caption>\n\n[TAGS]\n<5 hashtags>"
     )
-
-    user_message = f"Write a promotional post for this campaign:\n\n{promotion_prompt}"
-
-    response = _get_client().messages.create(
+    response = client.messages.create(
         model="claude-sonnet-4-6",
         max_tokens=1024,
         system=system,
-        messages=[{"role": "user", "content": user_message}],
+        messages=[{"role": "user", "content": f"Write a promotional post for: {promotion_prompt}"}],
     )
-
     raw = response.content[0].text
-    return _parse_caption_response(raw)
-
-
-def _parse_caption_response(raw: str) -> dict:
-    """Parse Claude's structured [EN] / [KH] / [TAGS] response."""
     en_match  = re.search(r"\[EN\]\s*(.*?)\s*(?=\[KH\]|\[TAGS\]|$)", raw, re.DOTALL)
     kh_match  = re.search(r"\[KH\]\s*(.*?)\s*(?=\[EN\]|\[TAGS\]|$)", raw, re.DOTALL)
     tag_match = re.search(r"\[TAGS\]\s*(.*?)$", raw, re.DOTALL)
-
     return {
-        "en_caption": en_match.group(1).strip() if en_match else "",
-        "kh_caption": kh_match.group(1).strip() if kh_match else "",
+        "en_caption": en_match.group(1).strip()  if en_match  else "",
+        "kh_caption": kh_match.group(1).strip()  if kh_match  else "",
         "hashtags":   tag_match.group(1).strip() if tag_match else "",
     }
