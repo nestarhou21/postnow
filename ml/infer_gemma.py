@@ -69,12 +69,16 @@ class GemmaCaptionModel:
         from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
         from peft import PeftModel
 
-        adapter_path = Path(adapter_path)
-        if not adapter_path.exists():
+        adapter_path_str = str(adapter_path)
+        is_hub_id = "/" in adapter_path_str and not adapter_path_str.startswith((".", "/"))
+        adapter_path = Path(adapter_path_str)
+        if not is_hub_id and not adapter_path.exists():
             raise FileNotFoundError(
                 f"LoRA adapter not found: {adapter_path}\n"
                 "Run ml/train_gemma.py first, or set USE_LOCAL_MODEL=false."
             )
+        # For HF Hub IDs, use the string form directly in from_pretrained calls
+        adapter_ref = adapter_path_str if is_hub_id else str(adapter_path)
 
         # Auto-detect device
         if device is None:
@@ -86,9 +90,9 @@ class GemmaCaptionModel:
         self.device = device
         print(f"[infer_gemma] Loading base model {base_model_id} on {device} ...")
 
-        # Tokenizer (load from adapter dir — was saved there during training)
+        # Tokenizer (load from adapter dir or HF Hub)
         self.tokenizer = AutoTokenizer.from_pretrained(
-            str(adapter_path), trust_remote_code=True
+            adapter_ref, trust_remote_code=True
         )
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
@@ -118,8 +122,8 @@ class GemmaCaptionModel:
                 base = base.to(device)
 
         # Load LoRA adapter on top
-        print(f"[infer_gemma] Loading LoRA adapter from {adapter_path} ...")
-        self.model = PeftModel.from_pretrained(base, str(adapter_path))
+        print(f"[infer_gemma] Loading LoRA adapter from {adapter_ref} ...")
+        self.model = PeftModel.from_pretrained(base, adapter_ref)
         self.model.eval()
         print("[infer_gemma] Model ready.")
 
