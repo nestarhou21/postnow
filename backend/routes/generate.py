@@ -20,7 +20,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from db import get_db
 from routes.auth import get_current_user
-from agents.caption_agent import generate_caption as claude_generate_caption
+from agents.caption_agent import generate_caption as claude_generate_caption, _simple_caption
 from agents.image_agent import generate_poster
 
 router   = APIRouter(prefix="/generate", tags=["generate"])
@@ -60,7 +60,12 @@ def _try_load_local_model():
     try:
         import importlib
         infer_module = importlib.import_module(module_name)
-        model_path   = os.path.join(project_root, LOCAL_MODEL_PATH)
+        # Use HF Hub ID directly if it looks like one (e.g. "Nestar2107/postnow_model")
+        # Otherwise treat as a local path relative to project root
+        if "/" in LOCAL_MODEL_PATH and not LOCAL_MODEL_PATH.startswith((".", "/")):
+            model_path = LOCAL_MODEL_PATH
+        else:
+            model_path = os.path.join(project_root, LOCAL_MODEL_PATH)
         success      = infer_module.load_model(model_path)
         if success:
             _infer_module = infer_module
@@ -98,15 +103,11 @@ def _generate_caption_dispatch(
             confidence = _infer_module.get_confidence(result)
             if confidence >= CONFIDENCE_THRESHOLD:
                 return result
-            print(
-                f"[generate] Local model confidence {confidence:.2f} < {CONFIDENCE_THRESHOLD} "
-                "— falling back to Claude."
-            )
+            print(f"[generate] Local model confidence {confidence:.2f} < threshold — using simple fallback.")
         except Exception as e:
-            print(f"[generate] Local model inference error: {e} — falling back to Claude.")
+            print(f"[generate] Local model inference error: {e} — using simple fallback.")
 
-    # Claude fallback
-    return claude_generate_caption(promotion_prompt, shop_name, aesthetic, colors)
+    return _simple_caption(promotion_prompt, shop_name, aesthetic)
 
 
 # ── Pydantic schemas ──────────────────────────────────────────────────────────
@@ -115,6 +116,16 @@ class GenerateRequest(BaseModel):
     prompt: str
     template_id: str = "centered"           # centered | text_banner | lifestyle | minimal
     reference_image_base64: str | None = None   # user-uploaded coffee photo (base64, no data: prefix)
+    reference_image_mime: str = "image/jpeg"
+
+
+class GuestGenerateRequest(BaseModel):
+    prompt: str
+    template_id: str = "centered"
+    shop_name: str = "My Café"
+    aesthetic: str = "Cozy"
+    colors: list[str] = ["#C8A27C", "#5A3E2B"]
+    reference_image_base64: str | None = None
     reference_image_mime: str = "image/jpeg"
 
 
@@ -218,6 +229,47 @@ def get_history(user_id: int = Depends(get_current_user)):
             (user_id,),
         ).fetchall()
     return [dict(r) for r in rows]
+
+
+@router.post("/guest")
+async def generate_guest(body: GuestGenerateRequest):
+    """No auth required — for public demo / free trial."""
+    loop = asyncio.get_event_loop()
+
+    caption_future = loop.run_in_executor(
+        executor,
+        _generate_caption_dispatch,
+        body.prompt,
+        body.shop_name,
+        body.aesthetic,
+        body.colors,
+    )
+
+    image_future = loop.run_in_executor(
+        executor,
+        generate_poster,
+        body.prompt,
+        body.shop_name,
+        body.aesthetic,
+        body.colors,
+        body.template_id,
+        body.reference_image_base64,
+        body.reference_image_mime,
+    )
+
+    try:
+        caption_result, image_result = await asyncio.gather(caption_future, image_future)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
+
+    return {
+        "generation_id": 0,
+        "en_caption":    caption_result["en_caption"],
+        "kh_caption":    caption_result["kh_caption"],
+        "hashtags":      caption_result["hashtags"],
+        "image_data_url": image_result["image_data_url"],
+        "prompt_used":   image_result["prompt_used"],
+    }
 
 
 @router.get("/model-status")

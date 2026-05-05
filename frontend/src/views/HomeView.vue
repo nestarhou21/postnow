@@ -1,180 +1,229 @@
 <template>
-  <div class="min-h-screen bg-surface flex flex-col font-body text-on-surface">
+  <div class="h-screen flex flex-col bg-[#111009] text-[#ece8e3] overflow-hidden">
 
     <!-- Header -->
-    <header class="px-6 sm:px-8 py-4 border-b border-surface-container-high bg-surface-lowest flex justify-between items-center sticky top-0 z-50 shadow-sm">
-      <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">coffee</span>
-        <span class="text-xl font-extrabold text-primary font-headline tracking-tight">POSTNOW</span>
+    <header class="flex items-center justify-between px-5 py-3 border-b border-white/8 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <img :src="botAvatar" class="w-8 h-8 rounded-full object-cover" />
+        <span class="font-bold text-[#C8A27C] text-base tracking-tight">POSTNOW</span>
+        <span class="text-xs text-[#444] hidden sm:block">· AI Poster Generator</span>
       </div>
-      <div class="flex items-center gap-4">
-        <button @click="router.push('/history')" class="text-xs font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors hidden sm:block">
-          History
-        </button>
-        <button @click="logout" class="text-xs font-bold uppercase tracking-widest text-on-surface-variant hover:text-primary transition-colors">
-          Logout
-        </button>
+      <div class="flex items-center gap-2">
+        <input v-model="shopName" placeholder="Shop name"
+          class="hidden sm:block bg-[#1e1c18] border border-white/8 text-[#ece8e3] text-xs rounded-lg px-3 py-1.5 outline-none focus:border-[#C8A27C]/40 w-36 placeholder:text-[#444]" />
+        <select v-model="aesthetic"
+          class="hidden sm:block bg-[#1e1c18] border border-white/8 text-[#777] text-xs rounded-lg px-2 py-1.5 outline-none focus:border-[#C8A27C]/40">
+          <option>Cozy</option><option>Bold</option><option>Minimalist</option>
+        </select>
       </div>
     </header>
 
-    <!-- Main -->
-    <main class="flex-1 max-w-2xl w-full mx-auto px-4 sm:px-6 py-10 flex flex-col gap-8">
+    <!-- Chat -->
+    <div ref="chatEl" class="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-5">
+      <div class="max-w-2xl w-full mx-auto flex flex-col gap-5">
 
-      <!-- Title -->
-      <div>
-        <h1 class="font-headline text-4xl sm:text-5xl font-extrabold text-on-surface tracking-tight">What's your promotion today?</h1>
-        <p class="text-on-surface-variant mt-2 font-medium">Generate a bilingual poster in under 2 minutes.</p>
-      </div>
-
-      <!-- Shop badge -->
-      <div v-if="auth.profile" class="flex items-center gap-2 px-4 py-2 bg-surface-container rounded-full border border-surface-container-high w-fit">
-        <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-        <span class="text-xs font-bold text-on-surface-variant tracking-wide">{{ auth.profile.shop_name }} · {{ auth.profile.aesthetic }}</span>
-      </div>
-
-      <!-- Promotion input -->
-      <div class="flex flex-col gap-2">
-        <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Promotion</label>
-        <textarea
-          v-model="prompt"
-          :disabled="loading"
-          placeholder="e.g. Buy 1 Get 1 Latte this weekend"
-          rows="3"
-          class="w-full bg-surface-container-low border border-surface-container-high focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-2xl px-5 py-4 text-base text-on-surface outline-none resize-none transition-all placeholder:text-on-surface-variant/50 disabled:opacity-50"
-        ></textarea>
-      </div>
-
-      <!-- Reference photo upload -->
-      <div class="flex flex-col gap-2">
-        <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-          Reference Photo
-          <span class="ml-2 font-normal normal-case text-on-surface-variant/60">(optional — upload a coffee shop photo)</span>
-        </label>
-
-        <!-- Preview state -->
-        <div v-if="photoPreview" class="relative rounded-2xl overflow-hidden border border-surface-container-high group">
-          <img :src="photoPreview" class="w-full h-52 object-cover" alt="Reference photo" />
-          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <button @click="removePhoto" class="px-4 py-2 bg-white rounded-full text-sm font-bold text-on-surface shadow-md hover:bg-gray-100 transition-colors flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[16px]">delete</span>
-              Remove photo
-            </button>
+        <!-- Welcome -->
+        <div class="flex gap-3 items-start">
+          <img :src="botAvatar" class="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
+          <div class="bg-[#1e1c18] border border-white/6 rounded-2xl rounded-tl-sm px-5 py-4 max-w-lg">
+            <p class="font-semibold text-[#C8A27C] mb-1.5">Welcome to POSTNOW</p>
+            <p class="text-sm text-[#aaa] leading-relaxed">Tell me your promotion and I'll generate a branded poster with captions in English and Khmer. Attach a photo of your drink for a more personalised result.</p>
           </div>
         </div>
 
-        <!-- Drop zone -->
-        <div
-          v-else
-          @click="fileInput?.click()"
-          @dragover.prevent="dragOver = true"
-          @dragleave="dragOver = false"
-          @drop.prevent="handleDrop"
-          :class="[
-            'border-2 border-dashed rounded-2xl h-36 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all',
-            dragOver
-              ? 'border-primary bg-primary/5'
-              : 'border-surface-container-highest bg-surface-container-low hover:border-primary/50 hover:bg-surface-container'
-          ]"
-        >
-          <span class="material-symbols-outlined text-[32px] text-on-surface-variant">add_photo_alternate</span>
-          <p class="text-sm text-on-surface-variant font-medium">Click to upload or drag and drop</p>
-          <p class="text-xs text-on-surface-variant/60">JPG, PNG, WEBP up to 10 MB</p>
-        </div>
+        <!-- Messages -->
+        <template v-for="(msg, i) in messages" :key="i">
 
-        <input
-          ref="fileInput"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          class="hidden"
-          @change="handleFileChange"
-        />
+          <!-- User -->
+          <div v-if="msg.role === 'user'" class="flex gap-3 items-start flex-row-reverse">
+            <div class="w-8 h-8 rounded-full bg-[#3a2e25] border border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-sm">🧑</div>
+            <div class="bg-[#2a2218] border border-white/6 rounded-2xl rounded-tr-sm px-5 py-3.5 max-w-lg">
+              <p class="text-sm text-[#ece8e3] leading-relaxed">{{ msg.text }}</p>
+              <img v-if="msg.photo" :src="msg.photo" class="mt-3 rounded-xl max-h-48 w-full object-contain border border-white/10 bg-[#111]" />
+            </div>
+          </div>
+
+          <!-- Loading with steps -->
+          <div v-else-if="msg.role === 'loading'" class="flex gap-3 items-start">
+            <img :src="botAvatar" class="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
+            <div class="bg-[#1e1c18] border border-white/6 rounded-2xl rounded-tl-sm px-5 py-4">
+              <div class="flex items-center gap-3">
+                <div class="flex gap-1 shrink-0">
+                  <span class="w-1.5 h-1.5 bg-[#C8A27C] rounded-full animate-bounce [animation-delay:0ms]"></span>
+                  <span class="w-1.5 h-1.5 bg-[#C8A27C] rounded-full animate-bounce [animation-delay:150ms]"></span>
+                  <span class="w-1.5 h-1.5 bg-[#C8A27C] rounded-full animate-bounce [animation-delay:300ms]"></span>
+                </div>
+                <span class="text-sm text-[#888] transition-all">{{ msg.text }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Result -->
+          <div v-else-if="msg.role === 'assistant'" class="flex gap-3 items-start">
+            <img :src="botAvatar" class="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
+            <div class="bg-[#1e1c18] border border-white/6 rounded-2xl rounded-tl-sm px-5 py-5 max-w-xl w-full flex flex-col gap-4">
+
+              <!-- Poster -->
+              <div>
+                <p class="text-[10px] text-[#555] uppercase tracking-widest mb-2.5 font-bold">Your Poster</p>
+                <img :src="msg.image_url" class="rounded-xl w-full border border-white/8 shadow-2xl" />
+              </div>
+
+              <!-- Captions -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div class="bg-[#111009] rounded-xl p-4 border border-white/6">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] font-bold text-[#555] uppercase tracking-widest">🇺🇸 English</span>
+                    <button @click="copy(msg.caption_en)" class="text-[#555] hover:text-[#C8A27C] transition-colors">
+                      <span class="material-symbols-outlined text-[15px]">content_copy</span>
+                    </button>
+                  </div>
+                  <p class="text-xs text-[#bbb] leading-relaxed">{{ msg.caption_en }}</p>
+                </div>
+                <div class="bg-[#111009] rounded-xl p-4 border border-white/6">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] font-bold text-[#555] uppercase tracking-widest">🇰🇭 Khmer</span>
+                    <button @click="copy(msg.caption_km)" class="text-[#555] hover:text-[#C8A27C] transition-colors">
+                      <span class="material-symbols-outlined text-[15px]">content_copy</span>
+                    </button>
+                  </div>
+                  <p class="text-xs text-[#bbb] leading-relaxed">{{ msg.caption_km }}</p>
+                </div>
+              </div>
+
+              <!-- Hashtags -->
+              <div class="flex flex-wrap gap-1.5">
+                <span v-for="tag in msg.hashtags.split(' ').filter(t => t)" :key="tag"
+                  class="text-[10px] px-2.5 py-1 rounded-full bg-[#C8A27C]/10 text-[#C8A27C] border border-[#C8A27C]/20 font-medium">
+                  {{ tag }}
+                </span>
+              </div>
+
+              <!-- Download -->
+              <button @click="downloadImage(msg.image_url, msg.id)"
+                class="flex items-center gap-2 w-fit px-5 py-2.5 bg-[#C8A27C] hover:bg-[#b8926c] text-[#111] rounded-full text-xs font-bold transition-all">
+                <span class="material-symbols-outlined text-[16px]">download</span>
+                Download Poster
+              </button>
+            </div>
+          </div>
+
+          <!-- Error -->
+          <div v-else-if="msg.role === 'error'" class="flex gap-3 items-start">
+            <img :src="botAvatar" class="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" />
+            <div class="bg-red-950/30 border border-red-500/20 rounded-2xl rounded-tl-sm px-5 py-4 max-w-lg text-sm text-red-400">
+              {{ msg.text }}
+            </div>
+          </div>
+
+        </template>
       </div>
+    </div>
 
-      <!-- Template picker -->
-      <div class="flex flex-col gap-3">
-        <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Poster Style</label>
-        <div class="grid grid-cols-2 gap-3">
-          <button
-            v-for="t in templates"
-            :key="t.id"
-            @click="selectedTemplate = t.id"
-            :class="[
-              'p-4 rounded-2xl border-2 text-left transition-all',
-              selectedTemplate === t.id
-                ? 'border-primary bg-primary/5 shadow-sm'
-                : 'border-surface-container-high bg-surface-container-low hover:border-primary/40'
-            ]"
-          >
-            <div class="text-xl mb-1.5">{{ t.icon }}</div>
-            <div class="font-bold text-sm text-on-surface">{{ t.label }}</div>
-            <div class="text-xs text-on-surface-variant mt-0.5">{{ t.desc }}</div>
+    <!-- Input area -->
+    <div class="shrink-0 px-4 pb-5 pt-3 border-t border-white/6">
+      <div class="max-w-2xl mx-auto flex flex-col gap-2.5">
+
+        <!-- Image preview (larger, full width) -->
+        <div v-if="photoPreview" class="bg-[#1e1c18] border border-white/8 rounded-2xl p-3 flex items-center gap-3">
+          <img :src="photoPreview" class="h-20 w-20 object-cover rounded-xl border border-white/10 shrink-0" />
+          <div class="flex-1 min-w-0">
+            <p class="text-xs text-[#aaa] font-medium">Photo attached</p>
+            <p class="text-[10px] text-[#555] mt-0.5">This will be used as reference for the drink</p>
+          </div>
+          <button @click="removePhoto" class="text-[#555] hover:text-red-400 transition-colors shrink-0">
+            <span class="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
+
+        <!-- Input bar -->
+        <div :class="[
+          'flex items-end gap-2 bg-[#1e1c18] border rounded-2xl px-4 py-3 transition-all',
+          inputFocused ? 'border-[#C8A27C]/40' : 'border-white/8'
+        ]">
+          <button @click="fileInput?.click()" class="text-[#555] hover:text-[#C8A27C] transition-colors mb-0.5 shrink-0" title="Attach drink photo">
+            <span class="material-symbols-outlined text-[22px]">attach_file</span>
+          </button>
+          <input ref="fileInput" type="file" accept="image/*" class="hidden" @change="handleFileChange" />
+
+          <textarea
+            ref="promptEl"
+            v-model="prompt"
+            :disabled="loading"
+            placeholder="Describe your promotion… e.g. Buy 1 Get 1 Latte this weekend"
+            rows="1"
+            @focus="inputFocused = true"
+            @blur="inputFocused = false"
+            @input="autoGrow"
+            @keydown.enter.exact.prevent="generate"
+            @keydown.shift.enter="null"
+            class="flex-1 bg-transparent outline-none resize-none text-sm text-[#ece8e3] placeholder:text-[#444] max-h-32 leading-relaxed disabled:opacity-40"
+          ></textarea>
+
+          <button @click="generate" :disabled="!prompt.trim() || loading"
+            class="w-8 h-8 rounded-xl flex items-center justify-center mb-0.5 transition-all disabled:opacity-25 disabled:cursor-not-allowed shrink-0"
+            :class="prompt.trim() && !loading ? 'bg-[#C8A27C] hover:bg-[#b8926c]' : 'bg-[#2a2820]'">
+            <svg width="14" height="14" viewBox="0 0 24 24" :fill="prompt.trim() && !loading ? '#111' : '#666'">
+              <path d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+
+        <p class="text-center text-[10px] text-[#333]">Enter to send · Shift+Enter for new line · Cmd+V to paste image</p>
       </div>
+    </div>
 
-      <!-- Error -->
-      <div v-if="error" class="flex items-start gap-3 bg-error/10 text-error rounded-2xl px-5 py-4 text-sm font-medium">
-        <span class="material-symbols-outlined text-[20px] mt-0.5 shrink-0">error</span>
-        <span>{{ error }}</span>
-      </div>
+    <!-- Toast -->
+    <div v-if="toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#2a2820] text-[#ece8e3] text-xs font-bold px-5 py-2.5 rounded-full shadow-xl z-50 flex items-center gap-2 border border-white/10">
+      <span class="material-symbols-outlined text-green-400 text-[15px]">check_circle</span>
+      {{ toast }}
+    </div>
 
-      <!-- Generate button -->
-      <button
-        @click="generate"
-        :disabled="!prompt.trim() || loading"
-        class="w-full bg-primary text-white font-bold text-base py-5 rounded-full shadow-[0_8px_16px_rgba(119,88,56,0.2)] hover:bg-[#8B6B4A] hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(119,88,56,0.3)] active:translate-y-0 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center justify-center gap-3"
-      >
-        <span v-if="loading" class="flex items-center gap-3">
-          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-          </svg>
-          Brewing your post...
-        </span>
-        <span v-else class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-[20px]">auto_awesome</span>
-          Create My Post
-        </span>
-      </button>
-
-    </main>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { ref, nextTick } from 'vue'
 import api from '../api'
+import botAvatar from '../assets/bot.png'
 
-const router = useRouter()
-const auth   = useAuthStore()
+const prompt       = ref('')
+const shopName     = ref('My Café')
+const aesthetic    = ref('Cozy')
+const loading      = ref(false)
+const inputFocused = ref(false)
+const toast        = ref('')
+const photoPreview = ref('')
+const photoBase64  = ref('')
+const photoMime    = ref('image/jpeg')
+const messages     = ref([])
+const chatEl       = ref(null)
+const promptEl     = ref(null)
+const fileInput    = ref(null)
 
-const prompt           = ref('')
-const selectedTemplate = ref('centered')
-const loading          = ref(false)
-const error            = ref('')
-const dragOver         = ref(false)
-const fileInput        = ref(null)
-const photoPreview     = ref('')
-const photoBase64      = ref('')
-const photoMime        = ref('image/jpeg')
-
-const templates = [
-  { id: 'centered',    icon: '☕', label: 'Centered',    desc: 'Product hero shot' },
-  { id: 'text_banner', icon: '✍️', label: 'Text Banner', desc: 'Bold typography' },
-  { id: 'lifestyle',   icon: '🌿', label: 'Lifestyle',   desc: 'Warm cafe scene' },
-  { id: 'minimal',     icon: '⬜', label: 'Minimal',     desc: 'Clean & elegant' },
+const LOADING_STEPS = [
+  'Analyzing your promotion…',
+  'Crafting a creative concept…',
+  'Generating your poster with Gemini…',
+  'Writing bilingual captions…',
+  'Almost done…',
 ]
 
-function logout() {
-  auth.logout()
-  router.push('/login')
+function autoGrow(e) {
+  const el = e.target
+  el.style.height = 'auto'
+  el.style.height = el.scrollHeight + 'px'
+}
+
+function scrollToBottom() {
+  nextTick(() => {
+    if (chatEl.value) chatEl.value.scrollTop = chatEl.value.scrollHeight
+  })
 }
 
 function removePhoto() {
-  photoPreview.value  = ''
-  photoBase64.value   = ''
+  photoPreview.value = ''
+  photoBase64.value  = ''
   if (fileInput.value) fileInput.value.value = ''
 }
 
@@ -183,59 +232,101 @@ function handleFileChange(e) {
   if (file) loadPhoto(file)
 }
 
-function handleDrop(e) {
-  dragOver.value = false
-  const file = e.dataTransfer.files?.[0]
-  if (file && file.type.startsWith('image/')) loadPhoto(file)
-}
-
 function loadPhoto(file) {
-  if (file.size > 10 * 1024 * 1024) {
-    error.value = 'Photo must be under 10 MB.'
-    return
-  }
+  if (file.size > 10 * 1024 * 1024) { showToast('Photo must be under 10 MB'); return }
   photoMime.value = file.type || 'image/jpeg'
   const reader = new FileReader()
   reader.onload = (e) => {
-    const dataUrl = e.target.result
-    photoPreview.value = dataUrl
-    // Strip the "data:image/...;base64," prefix — backend expects raw base64
-    photoBase64.value  = dataUrl.split(',')[1]
+    photoPreview.value = e.target.result
+    photoBase64.value  = e.target.result.split(',')[1]
   }
   reader.readAsDataURL(file)
 }
 
+document.addEventListener('paste', (e) => {
+  for (const item of e.clipboardData.items) {
+    if (item.type.startsWith('image/')) { loadPhoto(item.getAsFile()); break }
+  }
+})
+
 async function generate() {
   if (!prompt.value.trim() || loading.value) return
-  error.value   = ''
+
+  const text  = prompt.value.trim()
+  const photo = photoPreview.value
+
+  messages.value.push({ role: 'user', text, photo })
+  prompt.value       = ''
+  photoPreview.value = ''
+  if (promptEl.value) promptEl.value.style.height = 'auto'
+  scrollToBottom()
+
   loading.value = true
+
+  // Loading message with cycling steps
+  const loadingMsg = { role: 'loading', text: LOADING_STEPS[0] }
+  messages.value.push(loadingMsg)
+  scrollToBottom()
+
+  let step = 0
+  const stepInterval = setInterval(() => {
+    step = Math.min(step + 1, LOADING_STEPS.length - 1)
+    loadingMsg.text = LOADING_STEPS[step]
+  }, 6000)
 
   try {
     const body = {
-      prompt:      prompt.value.trim(),
-      template_id: selectedTemplate.value,
+      prompt:    text,
+      shop_name: shopName.value || 'My Café',
+      aesthetic: aesthetic.value,
+      colors:    ['#C8A27C', '#5A3E2B'],
     }
     if (photoBase64.value) {
       body.reference_image_base64 = photoBase64.value
       body.reference_image_mime   = photoMime.value
     }
+    photoBase64.value = ''
 
-    const res = await api.post('/generate', body)
+    const res = await api.post('/generate/guest', body)
+    const d   = res.data
 
-    // Store result in sessionStorage so ResultView can read it
-    sessionStorage.setItem('postnow_result', JSON.stringify({
-      id:         res.data.generation_id,
-      image_url:  res.data.image_data_url,
-      caption_en: res.data.en_caption,
-      caption_km: res.data.kh_caption,
-      hashtags:   res.data.hashtags,
-    }))
-
-    router.push(`/result/${res.data.generation_id}`)
+    messages.value.pop()
+    messages.value.push({
+      role:       'assistant',
+      id:         d.generation_id,
+      image_url:  d.image_data_url,
+      caption_en: d.en_caption,
+      caption_km: d.kh_caption,
+      hashtags:   d.hashtags || '',
+    })
   } catch (e) {
-    error.value = e.response?.data?.detail || 'Generation failed. Please try again.'
+    messages.value.pop()
+    messages.value.push({ role: 'error', text: e.response?.data?.detail || 'Generation failed. Please try again.' })
   } finally {
+    clearInterval(stepInterval)
     loading.value = false
+    scrollToBottom()
   }
+}
+
+async function copy(text) {
+  try {
+    await navigator.clipboard.writeText(text)
+    showToast('Copied to clipboard')
+  } catch { showToast('Could not copy') }
+}
+
+function downloadImage(url, id) {
+  const a = document.createElement('a')
+  a.href     = url
+  a.download = `postnow-poster-${id || Date.now()}.png`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+}
+
+function showToast(msg) {
+  toast.value = msg
+  setTimeout(() => { toast.value = '' }, 3000)
 }
 </script>
